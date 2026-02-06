@@ -1,0 +1,3765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Journey through 4,000 years of mathematical discovery! An interactive timeline exploring how precalculus concepts developed from ancient Babylon to modern calculus.">
+    <meta name="keywords" content="precalculus, mathematics, timeline, history, interactive learning, functions, algebra, trigonometry">
+    <meta name="author" content="Precalculus Timeline Project">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="The Timeline of Precalculus - Interactive Math History">
+    <meta property="og:description" content="Explore 4,000 years of mathematical discovery with interactive demos, mathematician profiles, and real-world connections!">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="The Timeline of Precalculus - Interactive Math History">
+    <meta property="twitter:description" content="Explore 4,000 years of mathematical discovery with interactive demos and real-world connections!">
+    
+    <title>The Timeline of Precalculus: A Journey Through Mathematical History</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:wght@700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.9;
+            color: #2c3e50;
+            background: #0a0a0f;
+            overflow-x: hidden;
+            font-size: 1.1rem;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text x="2" y="18" font-size="16" font-weight="bold" font-style="italic" fill="%23667eea">f</text></svg>'), auto;
+        }
+        
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: -0.02em;
+        }
+        
+        .hero p {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 3rem auto;
+            font-weight: 400;
+        }
+        
+        .scroll-hint {
+            position: absolute;
+            bottom: 30px;
+            font-size: 1rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+        
+        .timeline-container {
+            position: relative;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2.5rem;
+        }
+        
+        /* The vertical timeline line */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+        
+        .timeline-event {
+            position: relative;
+            margin: 4rem 0;
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease;
+        }
+        
+        .timeline-event.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Alternating left and right */
+        .timeline-event:nth-child(odd) .event-content {
+            margin-left: 0;
+            margin-right: auto;
+            padding-right: 4rem;
+        }
+        
+        .timeline-event:nth-child(even) .event-content {
+            margin-left: auto;
+            margin-right: 0;
+            padding-left: 4rem;
+        }
+        
+        /* Manual positioning to ensure strict alternation */
+        .event-left .event-content {
+            margin-left: 0 !important;
+            margin-right: auto !important;
+            padding-right: 4rem !important;
+            padding-left: 2.5rem !important;
+        }
+        
+        .event-right .event-content {
+            margin-left: auto !important;
+            margin-right: 0 !important;
+            padding-left: 4rem !important;
+            padding-right: 2.5rem !important;
+        }
+        
+        .event-content {
+            width: calc(50% - 2rem);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 5;
+        }
+        
+        .event-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* The dot on the timeline */
+        .timeline-dot {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            border: 4px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, 0);
+            z-index: 10;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        }
+        
+        .timeline-dot::after {
+            content: attr(data-date);
+            position: absolute;
+            left: 50%;
+            top: -35px;
+            transform: translateX(-50%);
+            background: rgba(102, 126, 234, 0.95);
+            color: white;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+            letter-spacing: 0.5px;
+        }
+        
+        /* Orange dots for context breaks */
+        .timeline-context-break::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 30px;
+            width: 24px;
+            height: 24px;
+            background: #ff9800;
+            border: 4px solid white;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.2);
+        }
+        
+        .timeline-context-break::after {
+            content: attr(data-date);
+            position: absolute;
+            left: 50%;
+            top: -5px;
+            transform: translateX(-50%);
+            background: rgba(255, 152, 0, 0.95);
+            color: white;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(255, 152, 0, 0.3);
+            letter-spacing: 0.5px;
+            z-index: 11;
+        }
+        
+        /* Orange dot for context breaks */
+        .timeline-context-break::before {
+            background: #ff9800;
+            box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.2);
+        }
+        
+        .timeline-date {
+            display: none;
+        }
+        
+        .event-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.1rem;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            line-height: 1.3;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        
+        .event-title:hover {
+            color: #764ba2;
+        }
+        
+        .event-title-text {
+            flex: 1;
+        }
+        
+        .event-toggle-icon {
+            font-size: 1.5rem;
+            font-weight: 700;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+        
+        .event-toggle-icon::before {
+            content: '−';
+        }
+        
+        .event-toggle-icon.collapsed::before {
+            content: '+';
+        }
+        
+        .event-body {
+            max-height: 10000px;
+            overflow: hidden;
+            transition: max-height 0.6s ease;
+        }
+        
+        .event-body.collapsed {
+            max-height: 0;
+        }
+        
+        .event-description {
+            font-size: 1.25rem;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            line-height: 1.9;
+        }
+        
+        .concept-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+            font-size: 1.15rem;
+            line-height: 1.9;
+        }
+        
+        .concept-title {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.35rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .math-connection {
+            background: #ffe5cc;
+            border-left: 5px solid #ff9800;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.15rem;
+            line-height: 1.9;
+        }
+        
+        .math-connection::before {
+            content: "🔗 Connection: ";
+            font-weight: bold;
+            color: #ff9800;
+        }
+        
+        .interactive-demo {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+            font-size: 1.1rem;
+        }
+        
+        .demo-title {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin: 1rem auto;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+        }
+        
+        .slider-container {
+            margin: 1.5rem 0;
+            padding: 0.5rem 0;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 28px;
+            border-radius: 14px;
+            background: linear-gradient(to right, #e0e0e0 0%, #e0e0e0 100%);
+            outline: none;
+            transition: all 0.3s ease;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text x="2" y="18" font-size="16" font-weight="bold" fill="%23667eea">×</text></svg>'), pointer;
+        }
+        
+        input[type="range"]:hover {
+            background: linear-gradient(to right, #e0e0e0 0%, #e0e0e0 100%);
+        }
+        
+        input[type="range"]:focus {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text x="2" y="18" font-size="16" font-weight="bold" fill="%23667eea">±</text></svg>'), pointer;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text x="2" y="18" font-size="16" font-weight="bold" fill="%23667eea">±</text></svg>'), pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+        }
+        
+        .value-display {
+            display: inline-block;
+            margin-left: 1rem;
+            font-size: 1.3rem;
+            color: #667eea;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+            padding: 0.3rem 0.8rem;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        
+        /* Interactive Buttons */
+        .interactive-button {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text x="2" y="18" font-size="16" font-weight="bold" fill="%23667eea">∑</text></svg>'), pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .interactive-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        }
+        
+        .interactive-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .interactive-button:focus {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        .primary-button {
+            background: #667eea;
+            color: white;
+        }
+        
+        .primary-button:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .reset-button {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .reset-button:hover {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+        
+        /* Styled Select Dropdowns */
+        select {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #2c3e50;
+            background: white;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text x="2" y="18" font-size="16" font-weight="bold" fill="%23667eea">ƒ</text></svg>'), pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 20px;
+            padding-right: 3rem;
+        }
+        
+        select:hover {
+            border-color: #764ba2;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        
+        select option {
+            padding: 1rem;
+            font-size: 1.1rem;
+            background: white;
+            color: #2c3e50;
+        }
+        
+        select option:checked {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        /* Canvas elements */
+        canvas {
+            width: 100%;
+            height: auto;
+            min-height: 300px;
+            border-radius: 12px;
+            background: white;
+            display: block;
+            margin: 1rem auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        canvas:hover {
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text x="2" y="18" font-size="16" font-weight="bold" fill="%23667eea">∞</text></svg>'), pointer;
+        }
+        
+        /* Ensure canvases are accessible */
+        canvas:focus {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        .era-marker {
+            position: relative;
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            margin: 4rem 0;
+            border-radius: 12px;
+            z-index: 15;
+        }
+        
+        .era-marker h2 {
+            font-size: 2.5rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 0.5rem;
+        }
+        
+        .era-marker p {
+            font-size: 1.3rem;
+            color: #e0e0e0;
+            line-height: 1.7;
+        }
+        
+        /* Mathematician Profile Styles */
+        .profile-card {
+            display: flex;
+            gap: 2rem;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            margin: 2rem 0;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .profile-avatar {
+            flex-shrink: 0;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+            border: 4px solid white;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .profile-avatar-fallback {
+            font-size: 3.5rem;
+        }
+        
+        .profile-info {
+            flex: 1;
+        }
+        
+        .profile-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.8rem;
+        }
+        
+        .profile-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+        
+        .profile-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .profile-bio {
+            color: #2c3e50;
+            line-height: 1.9;
+            font-size: 1.15rem;
+        }
+        
+        .profile-contribution {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 3px solid #ff9800;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .profile-contribution strong {
+            color: #ff9800;
+        }
+        
+        /* Modern Application Cards */
+        .modern-use {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e3f2fd 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .modern-use-title {
+            font-weight: 700;
+            color: #2196f3;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .use-case {
+            background: transparent;
+            padding: 1rem 0;
+            border-radius: 0;
+            margin: 0.8rem 0;
+            border-left: 4px solid rgba(255, 255, 255, 0.4);
+            padding-left: 1.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .use-case:hover {
+            border-left-color: rgba(255, 255, 255, 0.8);
+            padding-left: 2rem;
+        }
+        
+        .use-case-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .use-case-example {
+            color: #2c3e50;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        /* Modal Biography Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 3% auto;
+            padding: 3rem;
+            border-radius: 20px;
+            max-width: 950px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: slideUp 0.4s ease;
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            color: #667eea;
+            background: #f0f0f0;
+            transform: rotate(90deg);
+        }
+        
+        .modal-header {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+        
+        .modal-avatar {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+            border: 5px solid white;
+            flex-shrink: 0;
+        }
+        
+        .modal-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .modal-section {
+            margin: 2rem 0;
+        }
+        
+        .modal-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #764ba2;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #764ba2;
+            padding-bottom: 0.5rem;
+        }
+        
+        .modal-section p {
+            color: #2c3e50;
+            line-height: 1.9;
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+        }
+        
+        .modal-timeline {
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+        
+        .timeline-item-modal {
+            padding: 0.8rem 0;
+            border-left: 3px solid #667eea;
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .timeline-item-modal strong {
+            color: #667eea;
+            font-weight: 700;
+        }
+        
+        .profile-card:hover {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text x="2" y="18" font-size="16" font-weight="bold" fill="%23667eea">∫</text></svg>'), pointer;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .click-hint {
+            text-align: center;
+            color: #667eea;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        
+        .click-hint::before {
+            content: "👆 ";
+        }
+        
+        /* Historical Context Box */
+        .historical-context {
+            background: linear-gradient(135deg, #ffe5cc 0%, #ffe5cc 100%);
+            border: 3px solid #ff9800;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
+        }
+        
+        .historical-context::before {
+            content: "🌍";
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .context-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: #ff9800;
+            margin-bottom: 1.2rem;
+            margin-top: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .context-content {
+            color: #5d4037;
+            line-height: 1.9;
+            font-size: 1.2rem;
+        }
+        
+        .context-connection {
+            background: white;
+            border-left: 4px solid #ff9800;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            font-style: italic;
+            font-size: 1.15rem;
+            line-height: 1.9;
+        }
+        
+        .context-connection strong {
+            color: #ff9800;
+            font-style: normal;
+        }
+        
+        /* Expandable Sections */
+        .expandable-section {
+            margin: 1.5rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .expand-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.2rem 1.5rem;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text x="2" y="18" font-size="16" font-weight="bold" fill="%23ffffff">√</text></svg>'), pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        
+        .expand-header:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateX(5px);
+        }
+        
+        .expand-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .expand-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .expand-icon.expanded {
+            transform: rotate(180deg);
+        }
+        
+        /* Plus/Minus toggle icons */
+        .toggle-icon {
+            font-size: 1.8rem;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+        
+        .toggle-icon::before {
+            content: '+';
+        }
+        
+        .toggle-icon.expanded::before {
+            content: '−';
+        }
+        
+        .context-break-expandable .toggle-icon {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+        }
+        
+        .expand-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: white;
+        }
+        
+        .expand-content.expanded {
+            max-height: 3000px;
+        }
+        
+        .expand-content-inner {
+            padding: 1.5rem;
+        }
+        
+        /* Historical Context as expandable */
+        .historical-context-expandable {
+            background: linear-gradient(135deg, #ffe5cc 0%, #ffe5cc 100%);
+            border: none;
+        }
+        
+        .historical-context-expandable .expand-header {
+            background: linear-gradient(135deg, #ff9800 0%, #ff9800 100%);
+        }
+        
+        .historical-context-expandable .expand-header:hover {
+            background: linear-gradient(135deg, #ff9800 0%, #ff9800 100%);
+        }
+        
+        /* Modern Applications as expandable */
+        .modern-use-expandable {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e3f2fd 100%);
+            border: none;
+        }
+        
+        .modern-use-expandable .expand-header {
+            background: #2196f3;
+            color: white;
+        }
+        
+        .modern-use-expandable .expand-header:hover {
+            background: #2196f3;
+        }
+        
+        /* Standalone Context Break - sits between timeline events */
+        .timeline-context-break {
+            position: relative;
+            margin: 3rem 0;
+            padding-left: calc(50% + 30px);
+        }
+        
+        .timeline-context-break::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 30px;
+            width: 24px;
+            height: 24px;
+            background: #ff9800;
+            border: 4px solid white;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.2);
+        }
+        
+        .context-break-content {
+            max-width: 600px;
+        }
+        
+        .context-break-expandable {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(255, 152, 0, 0.15);
+            border: 2px solid rgba(255, 152, 0, 0.2);
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .context-break-expandable:hover {
+            box-shadow: 0 12px 40px rgba(255, 152, 0, 0.25);
+            border-color: rgba(255, 152, 0, 0.4);
+        }
+        
+        .context-break-expandable .expand-header {
+            background: transparent;
+            padding: 0;
+            border-bottom: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .context-break-expandable .expand-header:hover {
+            background: transparent;
+        }
+        
+        .context-break-expandable .expand-header h3 {
+            font-size: 1.4rem;
+            margin: 0;
+            color: #ff9800;
+        }
+        
+        .context-break-expandable .toggle-icon {
+            background: rgba(255, 152, 0, 0.15);
+        }
+        
+        .context-break-expandable .context-content {
+            color: #5d4037;
+            line-height: 1.9;
+            font-size: 1.2rem;
+        }
+        
+        .context-break-expandable .context-connection {
+            background: linear-gradient(135deg, #ffe5cc 0%, #ffe5cc 100%);
+            border-left: 4px solid #ff9800;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            font-style: italic;
+            font-size: 1.15rem;
+            line-height: 1.9;
+        }
+        
+        .context-break-expandable .context-connection strong {
+            color: #ff9800;
+            font-style: normal;
+        }
+        
+        .nav-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            z-index: 1000;
+        }
+        
+        .nav-progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        @media (max-width: 968px) {
+            .timeline-line {
+                left: 30px;
+            }
+            
+            .timeline-event:nth-child(odd) .event-content,
+            .timeline-event:nth-child(even) .event-content {
+                width: calc(100% - 80px);
+                margin-left: 80px;
+                margin-right: 0;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            
+            .timeline-dot {
+                left: 30px;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-progress">
+        <div class="nav-progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="hero">
+        <div>
+            <h1>The Timeline of Precalculus</h1>
+            <p>Journey through 4,000 years of mathematical discovery — from ancient clay tablets to the edge of calculus</p>
+        </div>
+        <div class="scroll-hint">↓ Scroll to Begin the Journey ↓</div>
+    </div>
+
+    <div class="timeline-container">
+        <div class="timeline-line"></div>
+
+        <!-- ANCIENT WORLD -->
+        <div class="era-marker">
+            <h2>🏛️ The Ancient World</h2>
+            <p>Where mathematics began: practical problems, geometric patterns, and the first glimmers of algebraic thinking</p>
+        </div>
+
+        <div class="timeline-event event-left">
+            <div class="timeline-dot" data-date="~2000 BCE"></div>
+            <div class="event-content">
+                <div class="timeline-date">~2000 BCE</div>
+                <div class="event-title" onclick="toggleEventContent(this)">
+                    <span class="event-title-text">Babylonian Mathematics: The First Functions</span>
+                    <span class="event-toggle-icon"></span>
+                </div>
+                <div class="event-body">
+                <div class="event-description">
+                    Ancient Babylonian merchants and astronomers created clay tablets filled with tables of numbers. They calculated squares, cubes, and reciprocals — not just for single calculations, but to see patterns.
+                </div>
+                
+                <div class="concept-box">
+                    <div class="concept-title">The Big Idea: Predictable Relationships</div>
+                    If you know that 5² = 25 and 6² = 36, you're recognizing that there's a relationship between input (the number) and output (its square). This is the seed of what we call functions today.
+                </div>
+                <div class="math-connection">
+                    These tables were early function tables. They show f(x) = x² even though that notation wouldn't exist for 3,800 more years!
+                </div>
+                
+                <div class="interactive-demo">
+                    <div class="demo-title">🧮 Interactive Abacus: The Original Calculator</div>
+                    <p style="text-align: center; margin-bottom: 1.5rem; color: #2c3e50; font-size: 1.1rem;">
+                        The abacus was used for over 4,000 years! Click and drag the beads to see how ancient mathematicians calculated.
+                    </p>
+                    
+                    <canvas id="abacusCanvas" 
+                            style="cursor: pointer;" 
+                            role="img" 
+                            aria-label="Interactive abacus - click columns to move beads"
+                            tabindex="0"></canvas>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+                        <button onclick="clearAbacus()" 
+                                class="interactive-button reset-button"
+                                aria-label="Clear all beads on abacus">
+                            Clear Abacus
+                        </button>
+                        <button onclick="randomAbacus()" 
+                                class="interactive-button primary-button"
+                                aria-label="Generate random number on abacus">
+                            Random Number
+                        </button>
+                    </div>
+                    
+                    <div id="abacusValue" style="text-align: center; margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; font-size: 2rem; font-weight: bold; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                        Value: 0
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #e3f2fd 0%, #e3f2fd 100%); padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem;">
+                        <h4 style="color: #667eea; margin-bottom: 1rem; font-size: 1.2rem;">📚 How the Abacus Works:</h4>
+                        <ul style="color: #2c3e50; line-height: 1.9; font-size: 1.1rem; margin-left: 1.5rem;">
+                            <li><strong>Each column = a place value:</strong> Ones (1), Tens (10), Hundreds (100), Thousands (1,000)</li>
+                            <li><strong>Top section (Heaven):</strong> Each bead = 5× that place value</li>
+                            <li><strong>Bottom section (Earth):</strong> Each bead = 1× that place value</li>
+                            <li><strong>The middle bar:</strong> Only beads touching the bar count!</li>
+                            <li><strong>Click and drag:</strong> Move beads toward the center bar to activate them</li>
+                        </ul>
+                        
+                        <div style="background: white; padding: 1rem; border-radius: 8px; margin-top: 1rem; border-left: 4px solid #667eea;">
+                            <strong style="color: #667eea;">💡 Example:</strong> To show 7 in the ones column (rightmost):
+                            <br>• Click the top bead and drag down to the bar (= 5)
+                            <br>• Click 2 bottom beads and drag up to the bar (= 2)
+                            <br>• Total = 5 + 2 = 7 ✨
+                        </div>
+                        
+                        <div style="background: #ffe5cc; padding: 1rem; border-radius: 8px; margin-top: 1rem; border-left: 4px solid #ff9800;">
+                            <strong style="color: #ff9800;">🔗 Connection to Functions:</strong> The abacus is a physical representation of a function! Each bead configuration (input) creates a unique number value (output). Ancient mathematicians were literally manipulating functions with their hands 4,000 years ago!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Break: Meanwhile in the World -->
+        <div class="timeline-context-break" data-date="~2000 BCE">
+            <div class="context-break-content">
+                <div class="expandable-section context-break-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌍 Meanwhile in the World (2000 BCE)</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="context-content">
+                                Babylon was one of the first great cities - with 200,000 people, massive walls, and the Hanging Gardens (one of the Seven Wonders). Merchants traded across vast distances. Farmers needed to predict floods. Priests tracked the stars for calendars and astrology. King Hammurabi was writing the first law code - which required fair division of land and goods. But how do you calculate areas? How do you divide things precisely? How do you predict when the Tigris river will flood?
+                            </div>
+                            <div class="context-connection">
+                                <strong>🔗 The Math Connection:</strong> Babylonian mathematics solved practical problems of civilization itself! Their number system (base-60) is why we have 60 minutes in an hour and 360 degrees in a circle - still used today! They created the first "function tables" showing that if you double the side of a square, the area quadruples (2² = 4). These patterns became the foundation for: agriculture (calculating field areas), architecture (building ziggurat temples), astronomy (predicting eclipses), and commerce (fair trade calculations). Without Babylonian math, civilization as we know it couldn't exist!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-event event-right">
+            <div class="timeline-dot" data-date="~300 BCE"></div>
+            <div class="event-content">
+                <div class="timeline-date">~300 BCE</div>
+                <div class="event-title">Euclid's Elements: The Power of Geometry</div>
+                
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Euklid-von-Alexandria_1.jpg/220px-Euklid-von-Alexandria_1.jpg" alt="Euclid" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'profile-avatar-fallback\'>📐</span>'">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">Euclid of Alexandria</div>
+                        <div class="profile-meta">
+                            <span class="profile-tag">📍 Alexandria, Egypt</span>
+                            <span class="profile-tag">📅 c. 300 BCE</span>
+                            <span class="profile-tag">🔬 Mathematician, Geometer</span>
+                        </div>
+                        <div class="profile-bio">
+                            Euclid taught at the Library of Alexandria. He compiled centuries of geometric knowledge into his 13-book masterpiece "Elements" — the most successful textbook in history, used for over 2,000 years.
+                        </div>
+                        <div class="profile-contribution">
+                            <strong>Revolutionary Contribution:</strong> Created the axiomatic method — starting with simple assumptions (axioms) and proving everything else logically. This became the foundation of all mathematical reasoning.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-description">
+                    Euclid compiled centuries of geometric knowledge into his Elements. While not about functions directly, he established the logical structure of mathematics — proving that relationships are consistent and universal.
+                </div>
+                
+                <div class="concept-box">
+                    <div class="concept-title">Why This Matters for Precalculus</div>
+                    Euclid showed that mathematical truth isn't arbitrary. The same relationships work everywhere, always. This universality is what makes functions powerful — they describe relationships that are true regardless of specific numbers.
+                </div>
+                
+                <div class="expandable-section modern-use-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌐 How We Use This Today</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="use-case">
+                                <div class="use-case-title">Computer Graphics & Gaming</div>
+                                <div class="use-case-example">3D games use Euclidean geometry to render worlds. Every triangle, polygon, and shape follows Euclid's geometric principles from 2,300 years ago.</div>
+                            </div>
+                            <div class="use-case">
+                                <div class="use-case-title">Architecture & Construction</div>
+                                <div class="use-case-example">Buildings, bridges, and roads are designed using Euclidean geometry. The Pythagorean theorem (from Elements) is used by construction workers daily.</div>
+                            </div>
+                            <div class="use-case">
+                                <div class="use-case-title">Proof Systems & Logic</div>
+                                <div class="use-case-example">Computer science proof systems and formal verification use Euclid's axiomatic method. Software that proves code correctness follows Euclidean logic.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Break: Meanwhile in the World -->
+        <div class="timeline-context-break" data-date="~300 BCE">
+            <div class="context-break-content">
+                <div class="expandable-section context-break-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌍 Meanwhile in the World (300 BCE)</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="context-content">
+                                Alexander the Great had just conquered the known world, creating a massive empire. Alexandria, Egypt became the intellectual capital - home to the greatest library in history with over 500,000 scrolls. The Pharos Lighthouse (one of the Seven Wonders) guided ships into harbor. But building massive structures like pyramids, temples, and lighthouses required precise geometry. How do you ensure a building won't collapse? How do you divide land fairly? How do you navigate by the stars?
+                            </div>
+                            <div class="context-connection">
+                                <strong>🔗 The Math Connection:</strong> Euclid's Elements provided the mathematical foundation for architecture and engineering! The Pythagorean theorem (a² + b² = c²) let builders create perfect right angles - essential for stable structures. His geometric proofs showed that these methods work ALWAYS, not just sometimes. This enabled: the Roman aqueducts (still standing 2000 years later), Gothic cathedrals (impossible without geometric precision), and modern skyscrapers. Today, every building you've ever entered was designed using Euclidean geometry. His logic system also became the foundation of computer science - Boolean logic and proof systems come directly from Euclid!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-event event-left">
+            <div class="timeline-dot" data-date="~150 CE"></div>
+            <div class="event-content">
+                <div class="timeline-date">~150 CE</div>
+                <div class="event-title">Ptolemy's Trigonometry: Cycles in the Sky</div>
+                
+                <div class="profile-card" onclick="openModal('ptolemy')">
+                    <div class="profile-avatar">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Ptolemy_16century.jpg/220px-Ptolemy_16century.jpg" alt="Claudius Ptolemy" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'profile-avatar-fallback\'>🔭</span>'">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">Claudius Ptolemy</div>
+                        <div class="profile-meta">
+                            <span class="profile-tag">📍 Alexandria, Egypt</span>
+                            <span class="profile-tag">📅 c. 100-170 CE</span>
+                            <span class="profile-tag">🔬 Astronomer, Mathematician, Geographer</span>
+                        </div>
+                        <div class="profile-bio">
+                            Ptolemy was a Greek-Egyptian scholar working at the famous Library of Alexandria. He needed to predict planetary positions for navigation and calendars. His work "Almagest" contained the first comprehensive trigonometric tables.
+                        </div>
+                        <div class="profile-contribution">
+                            <strong>Revolutionary Contribution:</strong> Created the first systematic chord tables (precursors to sine tables), establishing trigonometry as a mathematical discipline. His methods were used for over 1,000 years.
+                        </div>
+                    </div>
+                </div>
+                <div class="click-hint">Click to read full biography</div>
+                
+                <div class="expandable-section historical-context-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌍 Meanwhile in the World (150 CE)</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="context-content">
+                                The Roman Empire was at its peak under Emperor Marcus Aurelius. The Silk Road connected China to Rome, creating the first global trade network. Ships were navigating vast oceans, and merchants needed to know: "How far am I from land? What direction should I sail?"
+                            </div>
+                            <div class="context-connection">
+                                <strong>🔗 The Math Connection:</strong> Ptolemy's trigonometry solved this problem! Sailors could use the angle of the sun and stars to calculate their position. Without trigonometry, ships would be lost at sea. This same math later enabled Columbus's voyage to America (1492) and all modern GPS navigation.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-description">
+                    Ptolemy discovered that if you know an angle in a right triangle, you can predict the ratios of its sides. These ratios repeat in predictable cycles — the foundation of sine, cosine, and tangent.
+                </div>
+                
+                <div class="concept-box">
+                    <div class="concept-title">Birth of Periodic Functions</div>
+                    Ptolemy realized that angles and circles create repeating patterns. As you move around a circle, the height and width coordinates follow wave-like patterns. This insight connects geometry (circles) with functions (sin and cos).
+                </div>
+                
+                <div class="expandable-section modern-use-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌐 How We Use This Today</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="use-case">
+                                <div class="use-case-title">GPS & Navigation</div>
+                                <div class="use-case-example">Your phone uses spherical trigonometry (evolved from Ptolemy's work) to calculate your position from satellite signals. Every time you open Google Maps, you're using descendants of Ptolemy's trig tables.</div>
+                            </div>
+                            <div class="use-case">
+                                <div class="use-case-title">Sound & Music</div>
+                                <div class="use-case-example">Every sound is a sine wave. When you listen to music, your speakers vibrate in patterns described by sin(x). Music production software uses Ptolemy's trigonometry to analyze and synthesize sound.</div>
+                            </div>
+                            <div class="use-case">
+                                <div class="use-case-title">Animation & Gaming</div>
+                                <div class="use-case-example">Characters rotating in video games use trigonometry to calculate new positions. The smooth circular motion you see is computed using sin and cos functions 60+ times per second.</div>
+                            </div>
+                            <div class="use-case">
+                                <div class="use-case-title">AC Electricity</div>
+                                <div class="use-case-example">The electricity in your walls alternates 60 times per second in a perfect sine wave. Engineers use trigonometry to design every electrical device you own.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="interactive-demo">
+                    <div class="demo-title">Interactive Trigonometry: Circle to Waves</div>
+                    
+                    <h3 style="color: #667eea; font-size: 1.2rem; margin: 1.5rem 0 1rem 0; font-weight: 600;">The Unit Circle: Where Angles Become Coordinates</h3>
+                    <canvas id="unitCircle1" 
+                            role="img" 
+                            aria-label="Unit circle showing trigonometric functions"
+                            tabindex="0"></canvas>
+                    <div class="slider-container">
+                        <label>Rotate the angle:</label>
+                        <input type="range" id="angle1" min="0" max="360" value="30" step="1" 
+                               aria-label="Angle in degrees from 0 to 360"
+                               aria-valuemin="0" aria-valuemax="360" aria-valuenow="30">
+                        <span class="value-display" id="angleValue1">30°</span>
+                    </div>
+                    <p id="trigValues1" style="text-align: center; margin-top: 1rem; font-size: 1rem;"></p>
+                    
+                    <h3 style="color: #667eea; font-size: 1.2rem; margin: 2rem 0 1rem 0; font-weight: 600;">See the Wave: Sin and Cos Graphed</h3>
+                    <canvas id="trigWave" 
+                            role="img" 
+                            aria-label="Sine and cosine wave visualization"
+                            tabindex="0"></canvas>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.95rem;">Watch how the y-coordinate (sine) and x-coordinate (cosine) create waves as the angle increases. This is why sound, light, and ocean waves all use trigonometry!</p>
+                </div>
+                
+                <div class="math-connection">
+                    The x and y coordinates of a point on the circle ARE the cosine and sine of the angle. This connects geometry (circles) with functions (sin and cos).
+                </div>
+            </div>
+        </div>
+
+        <!-- GOLDEN AGE -->
+        <div class="era-marker">
+            <h2>📜 The Golden Age of Islamic Mathematics</h2>
+            <p>Where algebra was born and systematic equation-solving emerged</p>
+        </div>
+
+        <div class="timeline-event event-right">
+            <div class="timeline-dot" data-date="~820 CE"></div>
+            <div class="event-content">
+                <div class="timeline-date">~820 CE</div>
+                <div class="event-title">Al-Khwarizmi: The Father of Algebra</div>
+                
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Khwarizmi_Amirkabir_University_of_Technology.png/220px-Khwarizmi_Amirkabir_University_of_Technology.png" alt="Al-Khwarizmi" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'profile-avatar-fallback\'>📐</span>'">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">Muhammad ibn Musa al-Khwarizmi</div>
+                        <div class="profile-meta">
+                            <span class="profile-tag">📍 Baghdad, Iraq</span>
+                            <span class="profile-tag">📅 c. 780-850 CE</span>
+                            <span class="profile-tag">🔬 Mathematician, Astronomer, Scholar</span>
+                        </div>
+                        <div class="profile-bio">
+                            Al-Khwarizmi worked at the House of Wisdom in Baghdad during the Islamic Golden Age. He combined Greek, Indian, and Babylonian mathematical knowledge to create something entirely new: systematic algebra.
+                        </div>
+                        <div class="profile-contribution">
+                            <strong>Revolutionary Contribution:</strong> Wrote "The Compendious Book on Calculation by Completion and Balancing" — the word "algebra" comes from "al-jabr" in the title. His name gave us the word "algorithm"!
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-description">
+                    Before al-Khwarizmi, mathematicians solved specific problems. He showed general methods that work for entire classes of equations. This is polynomial algebra — the mathematics of expressions like ax² + bx + c = 0.
+                </div>
+                
+                <div class="concept-box">
+                    <div class="concept-title">From Specific to General</div>
+                    Al-Khwarizmi taught us to solve not just "find a number whose square equals 16" but to solve x² = 16 — a template that works for any number. This abstraction is the power of algebra.
+                </div>
+                
+                <div class="expandable-section modern-use-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌐 How We Use This Today</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="use-case">
+                                <div class="use-case-title">Physics & Engineering</div>
+                                <div class="use-case-example">Projectile motion (like thrown balls or rockets) follows parabolic paths: h(t) = -16t² + v₀t + h₀. Engineers use quadratic equations to design everything from bridges to roller coasters.</div>
+                            </div>
+                            <div class="use-case">
+                                <div class="use-case-title">Business & Finance</div>
+                                <div class="use-case-example">Profit optimization uses quadratic functions. If profit = -5x² + 100x - 200, businesses find the maximum by solving dp/dx = 0. Al-Khwarizmi's algebra is in every business decision.</div>
+                            </div>
+                            <div class="use-case">
+                                <div class="use-case-title">Computer Graphics</div>
+                                <div class="use-case-example">Parabolic curves (quadratic Bézier curves) create smooth shapes in design software. Every rounded corner in your phone's UI uses quadratic equations.</div>
+                            </div>
+                            <div class="use-case">
+                                <div class="use-case-title">Medicine</div>
+                                <div class="use-case-example">Drug concentration in blood follows parabolic patterns. Doctors use quadratic equations to calculate optimal dosing schedules.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="interactive-demo">
+                    <div class="demo-title">Explore: The Parabola (y = x²)</div>
+                    <canvas id="parabola1" 
+                            role="img" 
+                            aria-label="Parabola graph showing y equals x squared"
+                            tabindex="0"></canvas>
+                    <p style="text-align: center; margin-top: 1rem;">This U-shaped curve appears whenever you have a squared term. It describes everything from thrown balls to satellite dishes.</p>
+                </div>
+                
+                <div class="interactive-demo">
+                    <div class="demo-title">Interactive: Solve a Quadratic Equation</div>
+                    <div class="slider-container">
+                        <label>Change 'a' in ax² + bx + c = 0:</label>
+                        <input type="range" id="quadA" min="-3" max="3" value="1" step="0.5">
+                        <span class="value-display" id="quadAValue">1</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Change 'b' in ax² + bx + c = 0:</label>
+                        <input type="range" id="quadB" min="-5" max="5" value="0" step="0.5">
+                        <span class="value-display" id="quadBValue">0</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Change 'c' in ax² + bx + c = 0:</label>
+                        <input type="range" id="quadC" min="-5" max="5" value="-4" step="0.5">
+                        <span class="value-display" id="quadCValue">-4</span>
+                    </div>
+                    <canvas id="quadraticSolver" 
+                            role="img" 
+                            aria-label="Interactive quadratic equation solver showing parabola and solutions"
+                            tabindex="0"></canvas>
+                    <p id="quadraticSolutions" style="text-align: center; margin-top: 1rem; font-size: 1.1rem; font-weight: 600; color: #667eea;"></p>
+                    <p style="text-align: center; margin-top: 0.5rem; font-size: 0.95rem;">The solutions are where the parabola crosses the x-axis!</p>
+                </div>
+                <div class="math-connection">
+                    Quadratic equations create parabolas. The solutions to ax² + bx + c = 0 are where the parabola crosses the x-axis. Every time you solve a quadratic, you're finding where a parabola meets a line.
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Break: Meanwhile in the World -->
+        <div class="timeline-context-break" data-date="~820 CE">
+            <div class="context-break-content">
+                <div class="expandable-section context-break-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌍 Meanwhile in the World (820 CE)</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="context-content">
+                                Baghdad's House of Wisdom was the world's greatest library - like Google headquarters of the medieval world. Scholars translated Greek, Persian, and Indian texts. The Islamic Golden Age was producing innovations in medicine, astronomy, and mathematics. Meanwhile, Europe was in the "Dark Ages," and the Mayan civilization was building pyramids in Central America.
+                            </div>
+                            <div class="context-connection">
+                                <strong>🔗 The Math Connection:</strong> Al-Khwarizmi unified mathematical knowledge from three continents into algebra. His methods for solving equations became the foundation for: calculating inheritance (Islamic law required precise divisions), architectural design (building domes and arches), and astronomical calculations (prayer times depend on sun position). Today, his name lives on in "algorithm" - every computer program uses algorithms!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RENAISSANCE -->
+        <div class="era-marker">
+            <h2>🎨 The Renaissance: Mathematics Gets Visual</h2>
+            <p>European scholars rediscover ancient texts and begin to see mathematics geometrically</p>
+        </div>
+
+        <div class="timeline-event event-left">
+            <div class="timeline-dot" data-date="1591"></div>
+            <div class="event-content">
+                <div class="timeline-date">1591</div>
+                <div class="event-title">François Viète: Algebra Goes Symbolic</div>
+                
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Fran%C3%A7ois_Vi%C3%A8te.jpg/220px-Fran%C3%A7ois_Vi%C3%A8te.jpg" alt="François Viète" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'profile-avatar-fallback\'>🔤</span>'">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">François Viète</div>
+                        <div class="profile-meta">
+                            <span class="profile-tag">📍 France</span>
+                            <span class="profile-tag">📅 1540-1603</span>
+                            <span class="profile-tag">🔬 Mathematician, Lawyer, Cryptographer</span>
+                        </div>
+                        <div class="profile-bio">
+                            Viète was a lawyer who did mathematics in his spare time. He decoded encrypted enemy messages for King Henry IV of France. His mathematical notation system revolutionized algebra.
+                        </div>
+                        <div class="profile-contribution">
+                            <strong>Revolutionary Contribution:</strong> Introduced using vowels for unknowns and consonants for knowns in equations. This systematic symbolic notation made algebra manipulable and abstract for the first time.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-description">
+                    Viète revolutionized algebra by using letters to represent unknown quantities. Before him, algebra was written in full sentences. After him, we could write equations like x² + 3x = 10.
+                </div>
+                
+                <div class="concept-box">
+                    <div class="concept-title">The Power of Abstraction</div>
+                    By using symbols, Viète let mathematicians think about entire families of problems at once. Instead of solving "find a number whose square plus three times itself equals 10," we solve x² + 3x = 10 — which represents infinite similar problems.
+                </div>
+                
+                <div class="modern-use">
+                    <div class="modern-use-title">🌐 How We Use This Today</div>
+                    <div class="use-case">
+                        <div class="use-case-title">Programming & Code</div>
+                        <div class="use-case-example">Variables in code (like let x = 5 or int total = 0) are direct descendants of Viète's notation. Every programming language uses symbolic variables to represent unknown or changing values.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Physics Formulas</div>
+                        <div class="use-case-example">F = ma, E = mc², v = d/t — all physics formulas use Viète's symbolic notation. Instead of writing "force equals mass times acceleration," we write F = ma.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Spreadsheet Formulas</div>
+                        <div class="use-case-example">Excel formulas like =A1*B1+C1 use cell references as variables. This is symbolic algebra applied to data.</div>
+                    </div>
+                </div>
+                
+                <div class="math-connection">
+                    This symbolic notation is what lets us write functions. f(x) = x² + 3x is a family of relationships, not just a single calculation. Without Viète, we'd still be writing everything in words!
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Break: Meanwhile in the World -->
+        <div class="timeline-context-break" data-date="1591">
+            <div class="context-break-content">
+                <div class="expandable-section context-break-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌍 Meanwhile in the World (1591)</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="context-content">
+                                Europe was in Renaissance turmoil! The printing press had just spread ideas across the continent. Shakespeare was writing plays. Spain and England were locked in war. Most importantly: cryptography (secret codes) was becoming crucial for military and diplomatic communication. Viète himself was King Henry IV's code-breaker, deciphering enemy encrypted messages!
+                            </div>
+                            <div class="context-connection">
+                                <strong>🔗 The Math Connection:</strong> Viète's symbolic notation made pattern-recognition possible - the key to breaking codes! If you write "x + 5 = 12," you can solve for ANY similar equation by substituting different numbers. This abstraction powers: modern cryptography (RSA encryption uses symbolic algebra), computer programming (variables like x, y, z are Viète's invention), and AI (machine learning uses symbolic equations to find patterns). Every password protecting your accounts uses mathematics descended from Viète's notation!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-event event-right">
+            <div class="timeline-dot" data-date="1614"></div>
+            <div class="event-content">
+                <div class="timeline-date">1614</div>
+                <div class="event-title">John Napier: Logarithms Transform Multiplication</div>
+                <div class="event-description">
+                    Napier invented logarithms to make astronomical calculations easier. His insight: you can turn multiplication into addition using special tables.
+                </div>
+                <div class="concept-box">
+                    <div class="concept-title">Why Logarithms Matter</div>
+                    Logarithms answer the question: "What power do I raise this base to, to get this number?" If 2³ = 8, then log₂(8) = 3. They're the inverse of exponential functions.
+                </div>
+                <div class="math-connection">
+                    Exponentials grow multiplicatively (doubling, tripling). Logarithms let us measure that growth. Together, they're like forward and backward — they undo each other.
+                </div>
+            </div>
+        </div>
+
+        <!-- THE COORDINATE REVOLUTION -->
+        <div class="era-marker">
+            <h2>📊 The Coordinate Revolution</h2>
+            <p>Mathematics becomes visual — equations become graphs</p>
+        </div>
+
+        <div class="timeline-event event-left">
+            <div class="timeline-dot" data-date="1637"></div>
+            <div class="event-content">
+                <div class="timeline-date">1637</div>
+                <div class="event-title">René Descartes: Algebra Meets Geometry</div>
+                
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg/220px-Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg" alt="René Descartes" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'profile-avatar-fallback\'>📈</span>'">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">René Descartes</div>
+                        <div class="profile-meta">
+                            <span class="profile-tag">📍 France</span>
+                            <span class="profile-tag">📅 1596-1650</span>
+                            <span class="profile-tag">🔬 Philosopher, Mathematician, Scientist</span>
+                        </div>
+                        <div class="profile-bio">
+                            Descartes was lying in bed watching a fly on the ceiling when he realized: he could describe the fly's position using just two numbers! This insight led to the coordinate system that revolutionized mathematics.
+                        </div>
+                        <div class="profile-contribution">
+                            <strong>Revolutionary Contribution:</strong> Invented analytic geometry — the coordinate plane. This merged algebra and geometry into one unified system. Famous for "I think, therefore I am" (Cogito, ergo sum).
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-description">
+                    Descartes had a revolutionary idea: what if every point in space could be described by numbers? He invented the coordinate plane — the x and y axes we use today. Suddenly, equations became pictures.
+                </div>
+                
+                <div class="concept-box">
+                    <div class="concept-title">The Greatest Bridge in Mathematics</div>
+                    Before Descartes: algebra and geometry were separate worlds. After Descartes: every equation is a picture, and every geometric shape is an equation. This connection is the foundation of all precalculus.
+                </div>
+                
+                <div class="modern-use">
+                    <div class="modern-use-title">🌐 How We Use This Today</div>
+                    <div class="use-case">
+                        <div class="use-case-title">Computer Graphics & Gaming</div>
+                        <div class="use-case-example">Every pixel on your screen has (x, y) coordinates. Video games use Cartesian coordinates to track character positions, calculate collisions, and render 3D worlds. Descartes made modern gaming possible.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">GPS & Mapping</div>
+                        <div class="use-case-example">Your location is latitude and longitude — Cartesian coordinates on Earth's surface. Every map app uses Descartes' coordinate system to show "You are here."</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Data Visualization</div>
+                        <div class="use-case-example">Scatter plots, line graphs, bar charts — every data visualization uses Cartesian coordinates. When you see a chart showing stock prices or COVID cases, you're looking at Descartes' invention.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Robotics & Manufacturing</div>
+                        <div class="use-case-example">Industrial robots move to precise (x, y, z) positions. CNC machines carve shapes by following coordinate paths. Modern manufacturing depends on Cartesian coordinates.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Medical Imaging</div>
+                        <div class="use-case-example">CT scans and MRIs map your body as thousands of (x, y, z) points. Doctors use Cartesian coordinates to locate tumors with millimeter precision.</div>
+                    </div>
+                </div>
+                
+                <div class="interactive-demo">
+                    <div class="demo-title">The Coordinate Plane: Every Point Tells a Story</div>
+                    <canvas id="coordinatePlane" 
+                            role="img" 
+                            aria-label="Cartesian coordinate plane with plotted line"
+                            tabindex="0"></canvas>
+                    <p style="text-align: center; margin-top: 1rem;">Every point (x, y) represents an input-output pair. When you connect all the points of an equation, you see the relationship as a shape.</p>
+                </div>
+                
+                <div class="interactive-demo">
+                    <div class="demo-title">Interactive: Plot Your Own Function</div>
+                    <div class="slider-container">
+                        <label>Slope (m) in y = mx + b:</label>
+                        <input type="range" id="slopeM" min="-3" max="3" value="0.5" step="0.1">
+                        <span class="value-display" id="slopeMValue">0.5</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Y-intercept (b) in y = mx + b:</label>
+                        <input type="range" id="interceptB" min="-5" max="5" value="0" step="0.5">
+                        <span class="value-display" id="interceptBValue">0</span>
+                    </div>
+                    <canvas id="linearPlotter" 
+                            role="img" 
+                            aria-label="Interactive linear function plotter"
+                            tabindex="0"></canvas>
+                    <p id="linearEquation" style="text-align: center; margin-top: 1rem; font-size: 1.2rem; font-weight: 600; color: #667eea;"></p>
+                    <p style="text-align: center; margin-top: 0.5rem; font-size: 0.95rem;">This is a linear function - it creates a straight line. Change the slope to make it steeper or flatter!</p>
+                </div>
+                <div class="math-connection">
+                    This is why we graph functions! The graph IS the function — it's the visual representation of every input-output pair simultaneously. Descartes showed us that algebra (equations) and geometry (shapes) are the same thing in different languages.
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Break: Meanwhile in the World -->
+        <div class="timeline-context-break" data-date="1637">
+            <div class="context-break-content">
+                <div class="expandable-section context-break-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌍 Meanwhile in the World (1637)</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="context-content">
+                                The Scientific Revolution was exploding! Galileo had just proven Earth orbits the Sun. The first telescopes revealed moons around Jupiter. The Taj Mahal was being built in India. The Dutch East India Company was creating global capitalism. Maps were becoming crucial for exploration and colonization - but they were wildly inaccurate.
+                            </div>
+                            <div class="context-connection">
+                                <strong>🔗 The Math Connection:</strong> Descartes' coordinate system revolutionized mapmaking! For the first time, every location on Earth could be described precisely with latitude and longitude numbers. This enabled accurate navigation, which enabled global trade, which shaped the modern world. The same system now powers: GPS coordinates (your phone's location), computer graphics (every pixel has x,y coordinates), and data visualization (every graph you've ever seen). Descartes literally changed how we see and describe reality!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-event event-right">
+            <div class="timeline-dot" data-date="1683"></div>
+            <div class="event-content">
+                <div class="timeline-date">1683</div>
+                <div class="event-title">Jacob Bernoulli: The Mystery of e</div>
+                
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Jakob_Bernoulli.jpg/220px-Jakob_Bernoulli.jpg" alt="Jacob Bernoulli" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'profile-avatar-fallback\'>💰</span>'">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">Jacob Bernoulli</div>
+                        <div class="profile-meta">
+                            <span class="profile-tag">📍 Basel, Switzerland</span>
+                            <span class="profile-tag">📅 1655-1705</span>
+                            <span class="profile-tag">🔬 Mathematician, Scientist</span>
+                        </div>
+                        <div class="profile-bio">
+                            From a family of mathematicians, Jacob studied theology but fell in love with mathematics. He was fascinated by compound interest and probability. His work led to the discovery of one of nature's most important constants.
+                        </div>
+                        <div class="profile-contribution">
+                            <strong>Revolutionary Contribution:</strong> Discovered the constant e ≈ 2.71828... while studying compound interest. Asked: "What happens if you compound interest continuously?" The answer: lim(1 + 1/n)^n = e as n→∞
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-description">
+                    Bernoulli was studying compound interest. He asked: what happens if you compound interest continuously — not yearly, not monthly, but every instant? The answer involved a strange number: e ≈ 2.71828...
+                </div>
+                
+                <div class="concept-box">
+                    <div class="concept-title">The Natural Growth Number</div>
+                    The number e appears everywhere in nature: population growth, radioactive decay, cooling coffee, charging capacitors. It's the base of the "natural" exponential function: f(x) = e^x. Why "natural"? Because e^x is the only function that grows at a rate equal to its current value!
+                </div>
+                
+                <div class="modern-use">
+                    <div class="modern-use-title">🌐 How We Use This Today</div>
+                    <div class="use-case">
+                        <div class="use-case-title">Finance & Compound Interest</div>
+                        <div class="use-case-example">Your savings account uses A = Pe^(rt) for continuous compounding. Credit card companies use exponential functions to calculate interest. Every investment grows exponentially over time.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Population Biology</div>
+                        <div class="use-case-example">Bacterial growth follows P(t) = P₀e^(kt). Epidemiologists use exponential models to predict disease spread. COVID-19 models used e^x to forecast case growth.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Physics & Decay</div>
+                        <div class="use-case-example">Radioactive decay follows N(t) = N₀e^(-λt). Carbon dating uses this to determine fossil ages. Nuclear power plants calculate fuel decay using exponentials.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Social Media & Viral Content</div>
+                        <div class="use-case-example">Viral videos spread exponentially: each viewer shares with multiple people, who each share with multiple people. Likes and views follow exponential growth curves.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Machine Learning</div>
+                        <div class="use-case-example">Neural networks use the sigmoid function: σ(x) = 1/(1+e^(-x)). Every AI prediction involves the exponential constant e.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Pharmacology</div>
+                        <div class="use-case-example">Drug concentration in blood decays exponentially: C(t) = C₀e^(-kt). Doctors calculate medication schedules using exponential decay.</div>
+                    </div>
+                </div>
+                
+                <div class="interactive-demo">
+                    <div class="demo-title">Exponential Growth: e^x vs 2^x</div>
+                    <canvas id="exponential1" 
+                            role="img" 
+                            aria-label="Exponential growth comparison graph"
+                            tabindex="0"></canvas>
+                    <p style="text-align: center; margin-top: 1rem;">Exponential functions grow by multiplying. Each step doesn't add the same amount — it multiplies the current amount. This is why populations and investments grow exponentially.</p>
+                </div>
+                
+                <div class="interactive-demo">
+                    <div class="demo-title">Interactive: Compound Interest Calculator</div>
+                    <div class="slider-container">
+                        <label>Starting Amount: $<span id="principalDisplay">1000</span></label>
+                        <input type="range" id="principal" min="100" max="10000" value="1000" step="100">
+                    </div>
+                    <div class="slider-container">
+                        <label>Interest Rate: <span id="rateDisplay">5</span>%</label>
+                        <input type="range" id="rate" min="1" max="20" value="5" step="0.5">
+                    </div>
+                    <div class="slider-container">
+                        <label>Years: <span id="yearsDisplay">10</span></label>
+                        <input type="range" id="years" min="1" max="50" value="10" step="1">
+                    </div>
+                    <canvas id="compoundInterest" 
+                            role="img" 
+                            aria-label="Compound interest growth visualization"
+                            tabindex="0"></canvas>
+                    <p id="interestResult" style="text-align: center; margin-top: 1rem; font-size: 1.2rem; font-weight: 600; color: #667eea;"></p>
+                    <p style="text-align: center; margin-top: 0.5rem; font-size: 0.95rem;">Formula: A = Pe^(rt) — This is Bernoulli's continuous compounding formula!</p>
+                </div>
+                <div class="math-connection">
+                    Exponential functions model any situation where growth rate depends on current size. More population → more births. More money → more interest. That's exponential growth. The special property of e^x is that its rate of growth equals its value at every point!
+                </div>
+            </div>
+        </div>
+
+        <!-- THE FUNCTION REVOLUTION -->
+        <div class="era-marker">
+            <h2>⚡ The Function Revolution</h2>
+            <p>Functions become the central language of mathematics</p>
+        </div>
+
+        <!-- Context Break: Meanwhile in the World -->
+        <div class="timeline-context-break" data-date="1683">
+            <div class="context-break-content">
+                <div class="expandable-section context-break-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌍 Meanwhile in the World (1683)</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="context-content">
+                                Banking was being invented! The first stock exchanges opened in Amsterdam and London. People were lending and borrowing money on scales never seen before. But there was a problem: "If I lend you money at 5% interest compounded quarterly, how much will you owe me in 10 years?" No one could calculate it precisely. Trade and banking were limited by mathematical ignorance.
+                            </div>
+                            <div class="context-connection">
+                                <strong>🔗 The Math Connection:</strong> Bernoulli's discovery of e and exponential growth unlocked modern finance! Banks could now calculate compound interest precisely. This enabled: mortgages (buying homes with loans), bonds (governments borrowing money), stock markets (exponential business growth), and insurance (calculating risk probabilities). The 2008 financial crisis happened partly because bankers misused exponential growth formulas - they forgot that debt grows exponentially! Every credit card, student loan, and savings account uses Bernoulli's exponential mathematics.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-event event-left">
+            <div class="timeline-dot" data-date="1748"></div>
+            <div class="event-content">
+                <div class="timeline-date">1748</div>
+                <div class="event-title">Leonhard Euler: The Language of Functions</div>
+                
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Leonhard_Euler.jpg/220px-Leonhard_Euler.jpg" alt="Leonhard Euler" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'profile-avatar-fallback\'>🎓</span>'">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">Leonhard Euler</div>
+                        <div class="profile-meta">
+                            <span class="profile-tag">📍 Switzerland/Russia</span>
+                            <span class="profile-tag">📅 1707-1783</span>
+                            <span class="profile-tag">🔬 Mathematician, Physicist, Astronomer</span>
+                        </div>
+                        <div class="profile-bio">
+                            Euler is considered the most prolific mathematician in history. He wrote over 850 papers and books — so much that journals published his work for 50 years after his death! He went blind but continued doing mathematics in his head.
+                        </div>
+                        <div class="profile-contribution">
+                            <strong>Revolutionary Contribution:</strong> Introduced f(x) notation, standardized π and e, discovered e^(iπ) + 1 = 0 (called "the most beautiful equation"), and contributed to virtually every area of mathematics.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-description">
+                    Euler introduced the notation f(x) — "f of x." This simple notation transformed how mathematicians thought. A function isn't just an equation; it's a machine that processes inputs into outputs.
+                </div>
+                
+                <div class="concept-box">
+                    <div class="concept-title">Functions as Transformations</div>
+                    f(x) = x² doesn't just describe a parabola. It describes a process: "Take any number, square it, that's your answer." Functions are verbs, not just nouns. They DO something to inputs to create outputs.
+                </div>
+                
+                <div class="modern-use">
+                    <div class="modern-use-title">🌐 How We Use This Today</div>
+                    <div class="use-case">
+                        <div class="use-case-title">Computer Programming</div>
+                        <div class="use-case-example">Every programming function is based on Euler's notation. When you write function calculatePrice(quantity), you're using f(x) notation. Every app, website, and software you use is built on functions.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Machine Learning & AI</div>
+                        <div class="use-case-example">Neural networks are composed of layers of functions: f(g(h(x))). ChatGPT, image recognition, recommendation algorithms — all chains of functions transforming data step by step.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Spreadsheets & Excel</div>
+                        <div class="use-case-example">When you write =SUM(A1:A10) or =IF(B2>100, "High", "Low"), you're using functions. Excel formulas are Euler's function notation applied to business.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Image & Audio Processing</div>
+                        <div class="use-case-example">Instagram filters are functions: f(pixel) = adjusted_pixel. Spotify's equalizer applies functions to sound waves. Every photo edit or audio effect is a mathematical function.</div>
+                    </div>
+                </div>
+                
+                <div class="interactive-demo">
+                    <div class="demo-title">Interactive: Transform a Function</div>
+                    <div class="slider-container">
+                        <label>Vertical shift (k): f(x) = x² + k</label>
+                        <input type="range" id="vShift" min="-5" max="5" value="0" step="0.5">
+                        <span class="value-display" id="vShiftValue">0</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Horizontal shift (h): f(x) = (x - h)²</label>
+                        <input type="range" id="hShift" min="-5" max="5" value="0" step="0.5">
+                        <span class="value-display" id="hShiftValue">0</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Vertical stretch (a): f(x) = a·x²</label>
+                        <input type="range" id="vStretch" min="0.1" max="3" value="1" step="0.1">
+                        <span class="value-display" id="vStretchValue">1</span>
+                    </div>
+                    <canvas id="transformation" 
+                            role="img" 
+                            aria-label="Interactive function transformation visualization"
+                            tabindex="0"></canvas>
+                    <p id="equation" style="text-align: center; font-size: 1.2rem; color: #667eea; font-weight: bold; margin-top: 1rem;">f(x) = x²</p>
+                </div>
+                
+                <div class="interactive-demo">
+                    <div class="demo-title">🎮 Transformation Lab: When Does It Stop Being a Function?</div>
+                    <p style="text-align: center; margin-bottom: 1.5rem; color: #2c3e50; font-size: 1.05rem;">
+                        Experiment with different transformations and see when the graph fails the "vertical line test" (not a function anymore!)
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                            <label style="display: block; font-weight: 700; margin-bottom: 0.8rem; color: #667eea; font-size: 1.2rem;">Choose Base Function:</label>
+                            <select id="baseFunction">
+                                <option value="parabola">Parabola (x²)</option>
+                                <option value="cubic">Cubic (x³)</option>
+                                <option value="sqrt">Square Root (√x)</option>
+                                <option value="circle">Circle (x² + y² = 25)</option>
+                                <option value="absolute">Absolute Value (|x|)</option>
+                            </select>
+                        </div>
+                        
+                        <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                            <label style="display: block; font-weight: 700; margin-bottom: 0.8rem; color: #667eea; font-size: 1.2rem;">Transformation Type:</label>
+                            <select id="transformType">
+                                <option value="normal">Normal (No Rotation)</option>
+                                <option value="rotate90">Rotate 90° (Makes Some Functions Not Functions!)</option>
+                                <option value="reflect-x">Reflect Over X-axis</option>
+                                <option value="reflect-y">Reflect Over Y-axis</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>Vertical Shift: Add <span id="vShift2Display">0</span> to output</label>
+                        <input type="range" id="vShift2" min="-10" max="10" value="0" step="0.5">
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>Horizontal Shift: Replace x with (x - <span id="hShift2Display">0</span>)</label>
+                        <input type="range" id="hShift2" min="-10" max="10" value="0" step="0.5">
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>Vertical Stretch: Multiply output by <span id="vStretch2Display">1</span></label>
+                        <input type="range" id="vStretch2" min="-3" max="3" value="1" step="0.1">
+                    </div>
+                    
+                    <canvas id="transformationLab" 
+                            role="img" 
+                            aria-label="Transformation laboratory showing function transformations and vertical line test"
+                            tabindex="0"></canvas>
+                    
+                    <div id="functionStatus" style="text-align: center; margin-top: 1.5rem; padding: 1.5rem; border-radius: 12px; font-size: 1.2rem; font-weight: 600;">
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #e3f2fd 0%, #e3f2fd 100%); padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem;">
+                        <h4 style="color: #667eea; margin-bottom: 1rem; font-size: 1.2rem;">📚 What You're Learning:</h4>
+                        <ul style="color: #2c3e50; line-height: 1.9; font-size: 1.05rem; margin-left: 1.5rem;">
+                            <li><strong>Vertical Shift (+k):</strong> Moves entire graph up/down. Always keeps it a function!</li>
+                            <li><strong>Horizontal Shift (x-h):</strong> Moves graph left/right. Always keeps it a function!</li>
+                            <li><strong>Vertical Stretch (a·f(x)):</strong> Makes graph taller/flatter. Negative flips it! Always keeps it a function!</li>
+                            <li><strong>Rotation 90°:</strong> Can BREAK the function! √x rotated becomes a sideways parabola (NOT a function!)</li>
+                            <li><strong>The Vertical Line Test:</strong> If ANY vertical line crosses the graph more than once, it's NOT a function!</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="math-connection">
+                    Transformations teach you that complex functions are often simple functions in disguise. Master transformations, and you can understand any function by relating it to simpler ones you already know.
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Break: Meanwhile in the World -->
+        <div class="timeline-context-break" data-date="1748">
+            <div class="context-break-content">
+                <div class="expandable-section context-break-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌍 Meanwhile in the World (1748)</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="context-content">
+                                The Age of Enlightenment! Ben Franklin was experimenting with electricity. The Industrial Revolution was beginning - steam engines, factories, mass production. Musicians like Bach were pushing harmony to new limits. Astronomers were discovering new planets. But there was chaos: every mathematician used different notation, making collaboration nearly impossible.
+                            </div>
+                            <div class="context-connection">
+                                <strong>🔗 The Math Connection:</strong> Euler's standardized notation (f(x), π, e, i, Σ) was like creating a universal language for mathematics! Before Euler, math papers were incomprehensible across countries. After Euler, mathematics became truly international. This enabled: the Industrial Revolution (engineers could share designs), modern physics (Einstein used Euler's notation in E=mc²), and computer science (programming languages are based on function notation). Euler also connected trigonometry and exponentials through e^(iθ) = cos(θ) + i·sin(θ), revealing that rotation and growth are secretly the same thing - this powers everything from AC electricity to quantum mechanics!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-event event-right">
+            <div class="timeline-dot" data-date="1748"></div>
+            <div class="event-content">
+                <div class="timeline-date">1748</div>
+                <div class="event-title">Euler's Formula: The Most Beautiful Equation</div>
+                
+                <div class="event-description">
+                    Euler discovered that e^(iθ) = cos(θ) + i·sin(θ). This equation connects exponential functions, trigonometric functions, and imaginary numbers in one stunning relationship. When θ = π, this gives us e^(iπ) + 1 = 0 — often called "the most beautiful equation in mathematics."
+                </div>
+                
+                <div class="concept-box">
+                    <div class="concept-title">Why This Blows Minds</div>
+                    Exponential functions describe growth. Trigonometric functions describe rotation. Euler showed they're the SAME THING viewed differently. Growth in the complex plane IS rotation. This unified seemingly unrelated areas of mathematics.
+                </div>
+                
+                <div class="modern-use">
+                    <div class="modern-use-title">🌐 How We Use This Today</div>
+                    <div class="use-case">
+                        <div class="use-case-title">Signal Processing & Communications</div>
+                        <div class="use-case-example">Radio, WiFi, Bluetooth, and cell phones all use Fourier analysis — which relies on Euler's formula. Every wireless signal you receive is analyzed using e^(iθ) = cos(θ) + i·sin(θ).</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Quantum Mechanics</div>
+                        <div class="use-case-example">The Schrödinger equation uses e^(iθ) to describe quantum wave functions. The behavior of electrons and photons is described using Euler's formula.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Audio & Music Production</div>
+                        <div class="use-case-example">Every audio effect, equalizer, and synthesizer uses Euler's formula to decompose sound into sine waves. Auto-tune uses it to analyze pitch.</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">AC Circuit Design</div>
+                        <div class="use-case-example">Electrical engineers use complex exponentials to analyze alternating current circuits. Every electronic device you own was designed using Euler's formula.</div>
+                    </div>
+                </div>
+                
+                <div class="math-connection">
+                    This is why e^x and trigonometric functions appear together in physics. Waves, oscillations, and rotations are all related through Euler's formula. It's not a coincidence — it's deep mathematical truth.
+                </div>
+            </div>
+        </div>
+
+        <!-- THE EDGE OF CALCULUS -->
+        <div class="era-marker">
+            <h2>🚀 The Edge of Calculus</h2>
+            <p>Where precalculus meets the mathematics of instantaneous change</p>
+        </div>
+
+        <div class="timeline-event event-left">
+            <div class="timeline-dot" data-date="1687"></div>
+            <div class="event-content">
+                <div class="timeline-date">1687</div>
+                <div class="event-title">Newton & Leibniz: The Invention of Calculus</div>
+                
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Portrait_of_Sir_Isaac_Newton%2C_1689.jpg/220px-Portrait_of_Sir_Isaac_Newton%2C_1689.jpg" alt="Isaac Newton" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'profile-avatar-fallback\'>🍎</span>'">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">Isaac Newton</div>
+                        <div class="profile-meta">
+                            <span class="profile-tag">📍 England</span>
+                            <span class="profile-tag">📅 1643-1727</span>
+                            <span class="profile-tag">🔬 Physicist, Mathematician, Astronomer</span>
+                        </div>
+                        <div class="profile-bio">
+                            Newton developed calculus in the 1660s but didn't publish it for decades. He used it to explain planetary motion and write the Principia Mathematica — perhaps the most influential science book ever written. Also discovered gravity, laws of motion, and did groundbreaking work in optics.
+                        </div>
+                        <div class="profile-contribution">
+                            <strong>Revolutionary Contribution:</strong> Invented "fluxions" (derivatives) and "fluents" (integrals) to describe instantaneous change. Used calculus to prove Kepler's laws and explain the solar system mathematically.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-card" style="margin-top: 1.5rem;">
+                    <div class="profile-avatar">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Gottfried_Wilhelm_Leibniz%2C_Bernhard_Christoph_Francke.jpg/220px-Gottfried_Wilhelm_Leibniz%2C_Bernhard_Christoph_Francke.jpg" alt="Gottfried Leibniz" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'profile-avatar-fallback\'>∫</span>'">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">Gottfried Wilhelm Leibniz</div>
+                        <div class="profile-meta">
+                            <span class="profile-tag">📍 Germany</span>
+                            <span class="profile-tag">📅 1646-1716</span>
+                            <span class="profile-tag">🔬 Philosopher, Mathematician, Polymath</span>
+                        </div>
+                        <div class="profile-bio">
+                            Leibniz independently invented calculus in the 1670s. His notation (dy/dx, ∫) is what we use today. He was also a philosopher, lawyer, and diplomat who invented the binary number system and designed one of the first mechanical calculators.
+                        </div>
+                        <div class="profile-contribution">
+                            <strong>Revolutionary Contribution:</strong> Created the notation and formalism of calculus we still use. The dx, dy, and ∫ symbols are all Leibniz's inventions. Made calculus teachable and practical.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-description">
+                    Isaac Newton and Gottfried Leibniz independently invented calculus. But they could only do so because all the precalculus concepts were in place: functions, graphs, coordinates, exponentials, trigonometry, and transformations.
+                </div>
+                
+                <div class="concept-box">
+                    <div class="concept-title">Why Precalculus First?</div>
+                    Calculus asks: "What's happening right now? What's the instantaneous rate of change?" But you can't understand instantaneous change until you understand relationships. That's why precalculus comes first — it teaches you about relationships, patterns, and how functions behave.
+                </div>
+                
+                <div class="modern-use">
+                    <div class="modern-use-title">🌐 How Calculus Uses Precalculus</div>
+                    <div class="use-case">
+                        <div class="use-case-title">Physics & Engineering</div>
+                        <div class="use-case-example">Newton's F = ma becomes useful with calculus: F = m(dv/dt) = m(d²x/dt²). But you need to understand functions and rates of change (precalculus) before you can take derivatives (calculus).</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Economics & Optimization</div>
+                        <div class="use-case-example">Finding maximum profit requires taking derivatives of profit functions. But first you need to understand what functions are and how they behave — that's precalculus!</div>
+                    </div>
+                    <div class="use-case">
+                        <div class="use-case-title">Machine Learning</div>
+                        <div class="use-case-example">Neural networks train using gradient descent — calculus. But the activation functions (sigmoid, ReLU, tanh) are precalculus functions. You need both!</div>
+                    </div>
+                </div>
+                
+                <div class="math-connection">
+                    Every tool in precalculus — polynomials for smooth change, exponentials for proportional growth, trig for cycles — becomes a building block for calculus. Newton and Leibniz stood on the shoulders of 3,500 years of mathematical giants. Now you're learning those same foundations!
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Break: Meanwhile in the World -->
+        <div class="timeline-context-break" data-date="1687">
+            <div class="context-break-content">
+                <div class="expandable-section context-break-expandable">
+                    <div class="expand-header" onclick="toggleExpand(this)">
+                        <h3>🌍 Meanwhile in the World (1687)</h3>
+                        <span class="toggle-icon expanded"></span>
+                    </div>
+                    <div class="expand-content expanded">
+                        <div class="expand-content-inner">
+                            <div class="context-content">
+                                The world was in motion - literally! People watched apples fall, planets orbit, and cannonballs arc through the sky. But WHY? How fast does a falling apple accelerate? What path does a cannonball follow? How do you aim artillery accurately? These weren't just academic questions - they determined who won wars and which ships made it home. The Scientific Revolution demanded mathematics of motion.
+                            </div>
+                            <div class="context-connection">
+                                <strong>🔗 The Math Connection:</strong> Newton invented calculus to explain gravity and motion! His Principia Mathematica used calculus to prove that planets orbit in ellipses because of gravity's 1/r² force - solving a mystery that puzzled humanity for millennia. Leibniz invented calculus independently to solve optimization problems. Together, they gave us the mathematics of CHANGE itself. This enabled: artillery ballistics (hitting targets), rocket science (Apollo 11 to the moon), economics (marginal cost/benefit), and even The Atomic Bomb - the Manhattan Project used calculus to calculate nuclear chain reactions. Modern civilization runs on calculus, which builds on all the precalculus you're learning now!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODERN ERA -->
+        <div class="era-marker">
+            <h2>🌟 The Modern Era: Functions Everywhere</h2>
+            <p>How precalculus shapes our world today</p>
+        </div>
+
+        <div class="timeline-event event-right">
+            <div class="timeline-dot" data-date="2026"></div>
+            <div class="event-content">
+                <div class="timeline-date">Today</div>
+                <div class="event-title">Functions in Your Life</div>
+                <div class="event-description">
+                    Every concept in precalculus emerged from humanity trying to understand the world. Today, these same concepts power everything around you.
+                </div>
+                <div class="concept-box">
+                    <div class="concept-title">Real-World Precalculus</div>
+                    <ul style="margin-left: 1.5rem; margin-top: 1rem;">
+                        <li><strong>Linear functions:</strong> Your phone's battery draining, distance = speed × time</li>
+                        <li><strong>Quadratic functions:</strong> Thrown basketballs, satellite dishes, suspension bridges</li>
+                        <li><strong>Exponential functions:</strong> Viral videos spreading, compound interest growing, radioactive decay</li>
+                        <li><strong>Trigonometric functions:</strong> Sound waves, ocean tides, seasonal temperature changes, Ferris wheels</li>
+                        <li><strong>Logarithmic functions:</strong> Earthquake intensity (Richter scale), sound volume (decibels), pH levels</li>
+                    </ul>
+                </div>
+                <div class="math-connection">
+                    Functions aren't abstract symbols on paper. They're the patterns that describe reality. Learning precalculus is learning to see these patterns everywhere.
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-event event-left">
+            <div class="timeline-dot" data-date="Future"></div>
+            <div class="event-content">
+                <div class="timeline-date">Your Journey</div>
+                <div class="event-title">You're Part of This Story</div>
+                <div class="event-description">
+                    For 4,000 years, humans have been developing the language of functions to describe our world. Now it's your turn to learn this language.
+                </div>
+                <div class="concept-box">
+                    <div class="concept-title">What You're Really Learning</div>
+                    <p>Precalculus isn't about memorizing formulas. It's about learning to:</p>
+                    <ul style="margin-left: 1.5rem; margin-top: 1rem;">
+                        <li>Recognize relationships between quantities</li>
+                        <li>Predict how changes in one thing affect another</li>
+                        <li>See patterns in complexity</li>
+                        <li>Translate between different representations (equations, graphs, words)</li>
+                        <li>Build complex ideas from simple building blocks</li>
+                    </ul>
+                    <p style="margin-top: 1rem;">These skills transcend mathematics. They're ways of thinking that apply everywhere.</p>
+                </div>
+                <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2rem; border-radius: 8px; margin-top: 2rem; text-align: center;">
+                    <h3 style="margin-bottom: 1rem;">Remember:</h3>
+                    <p style="font-size: 1.2rem; line-height: 1.8;">Every mathematician in this timeline started where you are now. They made mistakes, got confused, struggled with concepts. But they kept going because they could see that mathematics reveals something true about our universe. You're learning the same truths they discovered — truths that work today just as they did 4,000 years ago.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal Biographies -->
+    <div id="ptolemyModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('ptolemy')">&times;</span>
+            <div class="modal-header">
+                <div class="modal-avatar">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Ptolemy_16century.jpg/220px-Ptolemy_16century.jpg" alt="Claudius Ptolemy">
+                </div>
+                <div>
+                    <div class="modal-title">Claudius Ptolemy</div>
+                    <div class="modal-subtitle">c. 100-170 CE • Alexandria, Egypt</div>
+                    <div class="modal-subtitle">Astronomer, Mathematician, Geographer</div>
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Early Life & Education</h3>
+                <p>Little is known about Ptolemy's early life, but he was likely born in Egypt and worked at the famous Library of Alexandria, one of the ancient world's greatest centers of learning. He wrote in Greek and was likely of Greek descent, though living under Roman rule.</p>
+                <p>The Library of Alexandria housed hundreds of thousands of scrolls and attracted scholars from across the Mediterranean. Ptolemy would have had access to centuries of astronomical observations and mathematical texts from Babylon, Egypt, and Greece.</p>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Major Works</h3>
+                <div class="modal-timeline">
+                    <div class="timeline-item-modal">
+                        <strong>The Almagest (c. 150 CE):</strong> His masterwork on astronomy and trigonometry. It contained the first comprehensive table of chords (sine equivalents) and explained how to predict planetary positions. This book was used for over 1,400 years.
+                    </div>
+                    <div class="timeline-item-modal">
+                        <strong>Geography (c. 150 CE):</strong> Created maps of the known world using latitude and longitude coordinates - an early application of the coordinate system concept.
+                    </div>
+                    <div class="timeline-item-modal">
+                        <strong>Optics:</strong> Studied light refraction and created tables of angles, furthering trigonometric applications.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Revolutionary Contributions to Mathematics</h3>
+                <p><strong>Trigonometry:</strong> Ptolemy created systematic chord tables that allowed calculation of any triangle's sides from its angles. These tables were predecessors to modern sine and cosine tables. His methods made navigation and astronomy practical sciences.</p>
+                <p><strong>The Ptolemaic System:</strong> While his Earth-centered model of the universe was eventually proven wrong, the mathematical methods he developed to track planetary motion were brilliant and accurate for their purpose.</p>
+                <p><strong>Mathematical Rigor:</strong> He showed how to use geometry and arithmetic together to solve real-world problems, establishing methods that influenced mathematics for centuries.</p>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Legacy & Impact</h3>
+                <p>Ptolemy's work dominated astronomy and mathematics for over a millennium. Arabic scholars preserved and built upon his texts during the Islamic Golden Age. When his works reached medieval Europe, they sparked renewed interest in mathematics and science.</p>
+                <p>Even though we now know the Earth orbits the Sun (not the other way around), Ptolemy's trigonometric methods remain valid. Every time you use sine or cosine, you're using tools descended from Ptolemy's chord tables.</p>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Fun Facts</h3>
+                <p>🔭 <strong>Predictive Power:</strong> Ptolemy's methods could predict lunar eclipses with remarkable accuracy - often within hours of the actual event.</p>
+                <p>🌍 <strong>Mapmaker:</strong> He created one of the first world maps using coordinate systems, with longitude and latitude lines.</p>
+                <p>⭐ <strong>Star Catalog:</strong> Cataloged over 1,000 stars with their positions - an astronomical database used for centuries.</p>
+                <p>📚 <strong>Name Origin:</strong> The name "Ptolemy" was common in Egypt during this period, shared with the famous Ptolemaic dynasty of pharaohs.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Expandable sections toggle
+        function toggleExpand(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.expand-icon, .toggle-icon');
+            
+            if (content) {
+                content.classList.toggle('expanded');
+            }
+            
+            if (icon) {
+                icon.classList.toggle('expanded');
+            }
+        }
+        
+        // Toggle event containers
+        function toggleEventContent(titleElement) {
+            const body = titleElement.nextElementSibling;
+            const icon = titleElement.querySelector('.event-toggle-icon');
+            
+            if (body && body.classList.contains('event-body')) {
+                body.classList.toggle('collapsed');
+            }
+            
+            if (icon) {
+                icon.classList.toggle('collapsed');
+            }
+        }
+        
+        // Toggle event content
+        function toggleEvent(titleElement) {
+            const collapsible = titleElement.nextElementSibling;
+            const toggle = titleElement.querySelector('.event-toggle');
+            
+            if (collapsible && collapsible.classList.contains('event-collapsible')) {
+                collapsible.classList.toggle('expanded');
+                if (toggle) {
+                    toggle.classList.toggle('expanded');
+                }
+            }
+        }
+        
+        // Modal functions
+        function openModal(person) {
+            document.getElementById(person + 'Modal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal(person) {
+            document.getElementById(person + 'Modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.timeline-event').forEach(event => {
+            observer.observe(event);
+        });
+
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight - windowHeight;
+            const scrolled = window.scrollY;
+            const progress = (scrolled / documentHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        });
+
+        // Unit Circle Animation 1
+        function drawUnitCircle1() {
+            const canvas = document.getElementById('unitCircle1');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = 300;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) * 0.35;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Axes
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, height);
+            ctx.stroke();
+            
+            // Circle
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            // Get angle
+            const degrees = parseFloat(document.getElementById('angle1').value);
+            const radians = degrees * Math.PI / 180;
+            
+            // Point on circle
+            const x = Math.cos(radians);
+            const y = Math.sin(radians);
+            const pointX = centerX + x * radius;
+            const pointY = centerY - y * radius;
+            
+            // Radius line
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(pointX, pointY);
+            ctx.stroke();
+            
+            // Point
+            ctx.fillStyle = '#667eea';
+            ctx.beginPath();
+            ctx.arc(pointX, pointY, 6, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Projections
+            ctx.strokeStyle = '#764ba2';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(pointX, pointY);
+            ctx.lineTo(pointX, centerY);
+            ctx.moveTo(pointX, pointY);
+            ctx.lineTo(centerX, pointY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Labels
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText(`(${x.toFixed(2)}, ${y.toFixed(2)})`, pointX + 10, pointY - 10);
+            
+            document.getElementById('angleValue1').textContent = degrees + '°';
+            document.getElementById('trigValues1').innerHTML = 
+                `<strong>cos(${degrees}°) = ${x.toFixed(3)}</strong> (x-coordinate) | ` +
+                `<strong>sin(${degrees}°) = ${y.toFixed(3)}</strong> (y-coordinate)`;
+        }
+
+        // Parabola
+        function drawParabola() {
+            const canvas = document.getElementById('parabola1');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = 300;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Axes
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, height - 20);
+            ctx.lineTo(width, height - 20);
+            ctx.moveTo(width/2, 0);
+            ctx.lineTo(width/2, height);
+            ctx.stroke();
+            
+            // Parabola
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            const scale = 20;
+            for (let x = -10; x <= 10; x += 0.1) {
+                const pixelX = width/2 + x * scale;
+                const y = x * x;
+                const pixelY = height - 20 - y * scale;
+                if (x === -10) {
+                    ctx.moveTo(pixelX, pixelY);
+                } else {
+                    ctx.lineTo(pixelX, pixelY);
+                }
+            }
+            ctx.stroke();
+        }
+
+        // Coordinate Plane
+        function drawCoordinatePlane() {
+            const canvas = document.getElementById('coordinatePlane');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = 300;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Grid
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 1;
+            const scale = 40;
+            for (let i = 0; i < width; i += scale) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, height);
+                ctx.stroke();
+            }
+            for (let i = 0; i < height; i += scale) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(width, i);
+                ctx.stroke();
+            }
+            
+            // Axes
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, height/2);
+            ctx.lineTo(width, height/2);
+            ctx.moveTo(width/2, 0);
+            ctx.lineTo(width/2, height);
+            ctx.stroke();
+            
+            // Simple line y = 0.5x
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, height/2);
+            ctx.lineTo(width, height/2 - width * 0.5);
+            ctx.stroke();
+            
+            // Label
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('y = 0.5x', width/2 + 10, height/2 - 60);
+        }
+
+        // Exponential
+        function drawExponential() {
+            const canvas = document.getElementById('exponential1');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = 300;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Axes
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, height - 20);
+            ctx.lineTo(width, height - 20);
+            ctx.moveTo(50, 0);
+            ctx.lineTo(50, height);
+            ctx.stroke();
+            
+            // e^x
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            const scale = 30;
+            for (let x = -2; x <= 3; x += 0.05) {
+                const pixelX = 50 + x * scale * 2;
+                const y = Math.exp(x);
+                const pixelY = height - 20 - y * scale;
+                if (x === -2) {
+                    ctx.moveTo(pixelX, pixelY);
+                } else {
+                    ctx.lineTo(pixelX, pixelY);
+                }
+            }
+            ctx.stroke();
+            
+            // 2^x
+            ctx.strokeStyle = '#764ba2';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let x = -2; x <= 3; x += 0.05) {
+                const pixelX = 50 + x * scale * 2;
+                const y = Math.pow(2, x);
+                const pixelY = height - 20 - y * scale;
+                if (x === -2) {
+                    ctx.moveTo(pixelX, pixelY);
+                } else {
+                    ctx.lineTo(pixelX, pixelY);
+                }
+            }
+            ctx.stroke();
+            
+            // Labels
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText('y = eˣ', width - 100, 50);
+            ctx.fillStyle = '#764ba2';
+            ctx.fillText('y = 2ˣ', width - 100, 80);
+        }
+
+        // Transformation
+        function drawTransformation() {
+            const canvas = document.getElementById('transformation');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = 300;
+            
+            const vShift = parseFloat(document.getElementById('vShift').value);
+            const hShift = parseFloat(document.getElementById('hShift').value);
+            const vStretch = parseFloat(document.getElementById('vStretch').value);
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Axes
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, height/2);
+            ctx.lineTo(width, height/2);
+            ctx.moveTo(width/2, 0);
+            ctx.lineTo(width/2, height);
+            ctx.stroke();
+            
+            // Original (faint)
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            const scale = 15;
+            for (let x = -10; x <= 10; x += 0.1) {
+                const pixelX = width/2 + x * scale;
+                const y = x * x;
+                const pixelY = height/2 - y * scale;
+                if (x === -10) {
+                    ctx.moveTo(pixelX, pixelY);
+                } else {
+                    ctx.lineTo(pixelX, pixelY);
+                }
+            }
+            ctx.stroke();
+            
+            // Transformed
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let x = -10; x <= 10; x += 0.1) {
+                const pixelX = width/2 + x * scale;
+                const y = vStretch * (x - hShift) * (x - hShift) + vShift;
+                const pixelY = height/2 - y * scale;
+                if (x === -10) {
+                    ctx.moveTo(pixelX, pixelY);
+                } else {
+                    ctx.lineTo(pixelX, pixelY);
+                }
+            }
+            ctx.stroke();
+            
+            // Update equation
+            let equation = 'f(x) = ';
+            if (vStretch !== 1) equation += vStretch.toFixed(1) + '·';
+            equation += '(x';
+            if (hShift !== 0) equation += (hShift > 0 ? ' - ' : ' + ') + Math.abs(hShift).toFixed(1);
+            equation += ')²';
+            if (vShift !== 0) equation += (vShift > 0 ? ' + ' : ' - ') + Math.abs(vShift).toFixed(1);
+            document.getElementById('equation').textContent = equation;
+        }
+
+        // Trigonometric wave visualization
+        function drawTrigWave() {
+            const canvas = document.getElementById('trigWave');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = 300;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            const angle1El = document.getElementById('angle1');
+            if (!angle1El) return;
+            const angle1 = parseFloat(angle1El.value);
+            const radians = angle1 * Math.PI / 180;
+            
+            // Draw axes
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, height/2);
+            ctx.lineTo(width, height/2);
+            ctx.stroke();
+            
+            // Draw sine wave
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            const scale = 60;
+            for (let x = 0; x <= width; x += 1) {
+                const theta = (x / width) * 4 * Math.PI;
+                const y = Math.sin(theta) * scale;
+                const pixelY = height/2 - y;
+                if (x === 0) {
+                    ctx.moveTo(x, pixelY);
+                } else {
+                    ctx.lineTo(x, pixelY);
+                }
+            }
+            ctx.stroke();
+            
+            // Draw cosine wave
+            ctx.strokeStyle = '#764ba2';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let x = 0; x <= width; x += 1) {
+                const theta = (x / width) * 4 * Math.PI;
+                const y = Math.cos(theta) * scale;
+                const pixelY = height/2 - y;
+                if (x === 0) {
+                    ctx.moveTo(x, pixelY);
+                } else {
+                    ctx.lineTo(x, pixelY);
+                }
+            }
+            ctx.stroke();
+            
+            // Mark current angle
+            const currentX = (radians / (4 * Math.PI)) * width;
+            const sinY = height/2 - Math.sin(radians) * scale;
+            const cosY = height/2 - Math.cos(radians) * scale;
+            
+            ctx.fillStyle = '#667eea';
+            ctx.beginPath();
+            ctx.arc(currentX, sinY, 8, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.fillStyle = '#764ba2';
+            ctx.beginPath();
+            ctx.arc(currentX, cosY, 8, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Labels
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 14px Inter';
+            ctx.fillText('sin(θ)', 20, 30);
+            ctx.fillStyle = '#764ba2';
+            ctx.fillText('cos(θ)', 20, 50);
+        }
+        
+        // Quadratic solver visualization
+        function drawQuadraticSolver() {
+            const canvas = document.getElementById('quadraticSolver');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = 300;
+            
+            const a = parseFloat(document.getElementById('quadA').value);
+            const b = parseFloat(document.getElementById('quadB').value);
+            const c = parseFloat(document.getElementById('quadC').value);
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Axes
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, height/2);
+            ctx.lineTo(width, height/2);
+            ctx.moveTo(width/2, 0);
+            ctx.lineTo(width/2, height);
+            ctx.stroke();
+            
+            // Draw parabola
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            const scale = 15;
+            let hasPoints = false;
+            for (let x = -10; x <= 10; x += 0.1) {
+                const pixelX = width/2 + x * scale;
+                const y = a * x * x + b * x + c;
+                const pixelY = height/2 - y * scale;
+                if (pixelY >= 0 && pixelY <= height) {
+                    hasPoints = true;
+                    if (x === -10 || !hasPoints) {
+                        ctx.moveTo(pixelX, pixelY);
+                    } else {
+                        ctx.lineTo(pixelX, pixelY);
+                    }
+                }
+            }
+            ctx.stroke();
+            
+            // Calculate and mark solutions
+            const discriminant = b * b - 4 * a * c;
+            const solutionEl = document.getElementById('quadraticSolutions');
+            
+            if (a === 0) {
+                if (solutionEl) solutionEl.textContent = 'Not a quadratic (a = 0)';
+            } else if (discriminant >= 0) {
+                const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                
+                // Mark solutions on x-axis with bigger, more visible points
+                ctx.fillStyle = '#ff9800';
+                ctx.strokeStyle = '#ff9800';
+                ctx.lineWidth = 3;
+                
+                if (Math.abs(x1) <= 10) {
+                    // Draw point
+                    ctx.beginPath();
+                    ctx.arc(width/2 + x1 * scale, height/2, 12, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                    
+                    // Draw label
+                    ctx.fillStyle = '#ff9800';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`x = ${x1.toFixed(2)}`, width/2 + x1 * scale, height/2 + 25);
+                }
+                if (Math.abs(x2) <= 10 && Math.abs(x1 - x2) > 0.1) {
+                    // Draw point
+                    ctx.fillStyle = '#ff9800';
+                    ctx.beginPath();
+                    ctx.arc(width/2 + x2 * scale, height/2, 12, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                    
+                    // Draw label
+                    ctx.fillStyle = '#ff9800';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`x = ${x2.toFixed(2)}`, width/2 + x2 * scale, height/2 + 25);
+                }
+                
+                if (Math.abs(x1 - x2) < 0.01) {
+                    if (solutionEl) solutionEl.textContent = `One solution: x = ${x1.toFixed(2)}`;
+                } else {
+                    if (solutionEl) solutionEl.textContent = `Solutions: x = ${x1.toFixed(2)} and x = ${x2.toFixed(2)}`;
+                }
+            } else {
+                if (solutionEl) solutionEl.textContent = 'No real solutions (parabola doesn\'t cross x-axis)';
+            }
+        }
+        
+        // Linear function plotter
+        function drawLinearPlotter() {
+            const canvas = document.getElementById('linearPlotter');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = 300;
+            
+            const m = parseFloat(document.getElementById('slopeM').value);
+            const b = parseFloat(document.getElementById('interceptB').value);
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Grid
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 1;
+            const scale = 40;
+            for (let i = 0; i < width; i += scale) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, height);
+                ctx.stroke();
+            }
+            for (let i = 0; i < height; i += scale) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(width, i);
+                ctx.stroke();
+            }
+            
+            // Axes
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, height/2);
+            ctx.lineTo(width, height/2);
+            ctx.moveTo(width/2, 0);
+            ctx.lineTo(width/2, height);
+            ctx.stroke();
+            
+            // Draw line
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let x = -width/2; x < width/2; x++) {
+                const y = m * (x / scale) + b;
+                const pixelX = width/2 + x;
+                const pixelY = height/2 - y * scale;
+                if (x === -width/2) {
+                    ctx.moveTo(pixelX, pixelY);
+                } else {
+                    ctx.lineTo(pixelX, pixelY);
+                }
+            }
+            ctx.stroke();
+            
+            // Mark y-intercept
+            ctx.fillStyle = '#ff9800';
+            ctx.beginPath();
+            ctx.arc(width/2, height/2 - b * scale, 8, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Update equation
+            const eqEl = document.getElementById('linearEquation');
+            if (eqEl) {
+                let equation = 'y = ';
+                if (m !== 0) equation += m.toFixed(1) + 'x';
+                if (b !== 0) equation += (b > 0 ? ' + ' : ' - ') + Math.abs(b).toFixed(1);
+                if (m === 0 && b === 0) equation += '0';
+                eqEl.textContent = equation;
+            }
+        }
+        
+        // Compound interest calculator
+        function drawCompoundInterest() {
+            const canvas = document.getElementById('compoundInterest');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = 300;
+            
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('rate').value) / 100;
+            const years = parseFloat(document.getElementById('years').value);
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Calculate final amount
+            const finalAmount = principal * Math.exp(rate * years);
+            
+            // Draw axes
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(50, height - 30);
+            ctx.lineTo(width - 10, height - 30);
+            ctx.moveTo(50, 10);
+            ctx.lineTo(50, height - 30);
+            ctx.stroke();
+            
+            // Find max value for scaling
+            const maxValue = finalAmount;
+            const scale = (height - 50) / maxValue;
+            
+            // Draw growth curve
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let t = 0; t <= years; t += years / 100) {
+                const amount = principal * Math.exp(rate * t);
+                const x = 50 + (t / years) * (width - 60);
+                const y = height - 30 - amount * scale;
+                if (t === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+            
+            // Mark start and end points
+            ctx.fillStyle = '#667eea';
+            ctx.beginPath();
+            ctx.arc(50, height - 30 - principal * scale, 8, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.fillStyle = '#ff9800';
+            ctx.beginPath();
+            ctx.arc(width - 10, height - 30 - finalAmount * scale, 10, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Labels
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = '12px Inter';
+            ctx.fillText('Years →', width - 60, height - 10);
+            ctx.save();
+            ctx.translate(15, height/2);
+            ctx.rotate(-Math.PI/2);
+            ctx.fillText('Amount ($)', 0, 0);
+            ctx.restore();
+            
+            // Update result
+            const resultEl = document.getElementById('interestResult');
+            if (resultEl) {
+                resultEl.textContent = `$${principal.toFixed(0)} grows to $${finalAmount.toFixed(2)} in ${years} years!`;
+            }
+        }
+
+        // Interactive Abacus
+        let abacusState = {
+            columns: [
+                { heaven: 0, earth: 0 }, // thousands
+                { heaven: 0, earth: 0 }, // hundreds
+                { heaven: 0, earth: 0 }, // tens
+                { heaven: 0, earth: 0 }  // ones
+            ]
+        };
+        
+        function drawAbacus() {
+            const canvas = document.getElementById('abacusCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = 400;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw frame - Light wood
+            ctx.fillStyle = '#C9A882';
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = '#E8D4B8';
+            ctx.fillRect(10, 10, width - 20, height - 20);
+            
+            // Middle divider bar - Light wood
+            const dividerY = height / 2;
+            ctx.fillStyle = '#B8956A';
+            ctx.fillRect(15, dividerY - 10, width - 30, 20);
+            
+            const colWidth = (width - 30) / 4;
+            
+            // Draw columns and beads
+            for (let i = 0; i < 4; i++) {
+                const colX = 15 + i * colWidth + colWidth / 2;
+                
+                // Draw rod - Light wood
+                ctx.strokeStyle = '#B8956A';
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.moveTo(colX, 20);
+                ctx.lineTo(colX, height - 20);
+                ctx.stroke();
+                
+                // Heaven beads (top, worth 5) - Baby pink
+                const heavenBeadY = abacusState.columns[i].heaven === 1 ? dividerY - 30 : 50;
+                drawBead(ctx, colX, heavenBeadY, 'pink', i === 3 ? '5' : '');
+                
+                // Earth beads (bottom, worth 1 each) - Baby blue
+                for (let j = 0; j < 4; j++) {
+                    let earthBeadY;
+                    if (j < abacusState.columns[i].earth) {
+                        // Active beads - move up toward bar
+                        earthBeadY = dividerY + 30 + j * 10;
+                    } else {
+                        // Inactive beads - stay at bottom
+                        earthBeadY = height - 100 + (j - abacusState.columns[i].earth) * 20;
+                    }
+                    drawBead(ctx, colX, earthBeadY, 'blue', '');
+                }
+                
+                // Place value labels
+                ctx.fillStyle = '#5D4E37';
+                ctx.font = 'bold 14px Inter';
+                ctx.textAlign = 'center';
+                const labels = ['1000s', '100s', '10s', '1s'];
+                ctx.fillText(labels[i], colX, height - 10);
+            }
+            
+            updateAbacusValue();
+        }
+        
+        function drawBead(ctx, x, y, color, label) {
+            // Softer shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.15)';
+            ctx.beginPath();
+            ctx.ellipse(x + 2, y + 2, 25, 18, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Bead body with modern gradients
+            const gradient = ctx.createRadialGradient(x - 10, y - 8, 5, x, y, 25);
+            if (color === 'pink') {
+                // Modern baby pink
+                gradient.addColorStop(0, '#FFD4E5');
+                gradient.addColorStop(1, '#FFB3D9');
+            } else {
+                // Modern baby blue
+                gradient.addColorStop(0, '#C5E3F6');
+                gradient.addColorStop(1, '#A8D8F0');
+            }
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.ellipse(x, y, 25, 18, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Brighter highlight for modern look
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.beginPath();
+            ctx.ellipse(x - 8, y - 6, 10, 7, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Subtle border
+            ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(x, y, 25, 18, 0, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            if (label) {
+                ctx.fillStyle = '#666';
+                ctx.font = 'bold 12px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(label, x, y + 4);
+            }
+        }
+        
+        function getClickedColumn(canvas, event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const colWidth = (canvas.width - 30) / 4;
+            
+            if (x < 15 || x > canvas.width - 15) return null;
+            
+            const col = Math.floor((x - 15) / colWidth);
+            const isHeaven = y < canvas.height / 2;
+            
+            return { col, isHeaven };
+        }
+        
+        function handleAbacusClick(event) {
+            const canvas = document.getElementById('abacusCanvas');
+            const clicked = getClickedColumn(canvas, event);
+            
+            if (!clicked) return;
+            
+            if (clicked.isHeaven) {
+                // Toggle heaven bead
+                abacusState.columns[clicked.col].heaven = abacusState.columns[clicked.col].heaven === 0 ? 1 : 0;
+            } else {
+                // Cycle earth beads (0 -> 1 -> 2 -> 3 -> 4 -> 0)
+                abacusState.columns[clicked.col].earth = (abacusState.columns[clicked.col].earth + 1) % 5;
+            }
+            
+            drawAbacus();
+        }
+        
+        function updateAbacusValue() {
+            let total = 0;
+            const multipliers = [1000, 100, 10, 1];
+            
+            for (let i = 0; i < 4; i++) {
+                const colValue = abacusState.columns[i].heaven * 5 + abacusState.columns[i].earth;
+                total += colValue * multipliers[i];
+            }
+            
+            const valueEl = document.getElementById('abacusValue');
+            if (valueEl) {
+                valueEl.innerHTML = `Value: <span style="font-size: 2.5rem;">${total.toLocaleString()}</span>`;
+            }
+        }
+        
+        function clearAbacus() {
+            abacusState.columns = [
+                { heaven: 0, earth: 0 },
+                { heaven: 0, earth: 0 },
+                { heaven: 0, earth: 0 },
+                { heaven: 0, earth: 0 }
+            ];
+            drawAbacus();
+        }
+        
+        function randomAbacus() {
+            for (let i = 0; i < 4; i++) {
+                abacusState.columns[i].heaven = Math.random() < 0.5 ? 1 : 0;
+                abacusState.columns[i].earth = Math.floor(Math.random() * 5);
+            }
+            drawAbacus();
+        }
+
+        // Transformation Lab with function detection
+        function drawTransformationLab() {
+            const canvas = document.getElementById('transformationLab');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.clientWidth;
+            const height = canvas.height = 400;
+            
+            const baseFunc = document.getElementById('baseFunction').value;
+            const transformType = document.getElementById('transformType').value;
+            const vShift = parseFloat(document.getElementById('vShift2').value);
+            const hShift = parseFloat(document.getElementById('hShift2').value);
+            const vStretch = parseFloat(document.getElementById('vStretch2').value);
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw grid
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 1;
+            const gridSize = 30;
+            for (let i = 0; i < width; i += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, height);
+                ctx.stroke();
+            }
+            for (let i = 0; i < height; i += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(width, i);
+                ctx.stroke();
+            }
+            
+            // Draw axes
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, height/2);
+            ctx.lineTo(width, height/2);
+            ctx.moveTo(width/2, 0);
+            ctx.lineTo(width/2, height);
+            ctx.stroke();
+            
+            const scale = 20;
+            
+            // Function to get y values for a given x
+            function getYValues(x) {
+                let baseY;
+                switch(baseFunc) {
+                    case 'parabola':
+                        baseY = [x * x];
+                        break;
+                    case 'cubic':
+                        baseY = [x * x * x / 5];
+                        break;
+                    case 'sqrt':
+                        if (x >= 0) baseY = [Math.sqrt(x) * 3];
+                        else baseY = [];
+                        break;
+                    case 'circle':
+                        const r = 5;
+                        if (Math.abs(x) <= r) {
+                            const y = Math.sqrt(r*r - x*x);
+                            baseY = [y, -y]; // Circle has two y values per x
+                        } else {
+                            baseY = [];
+                        }
+                        break;
+                    case 'absolute':
+                        baseY = [Math.abs(x)];
+                        break;
+                }
+                
+                // Apply transformations
+                let results = [];
+                for (let y of baseY) {
+                    let newX = x;
+                    let newY = y;
+                    
+                    // Apply shifts and stretches
+                    newX = x - hShift;
+                    newY = vStretch * y + vShift;
+                    
+                    // Apply rotation/reflection
+                    if (transformType === 'rotate90') {
+                        // Swap x and y (90 degree rotation)
+                        let temp = newX;
+                        newX = -newY;
+                        newY = temp;
+                    } else if (transformType === 'reflect-x') {
+                        newY = -newY;
+                    } else if (transformType === 'reflect-y') {
+                        newX = -newX;
+                    }
+                    
+                    results.push({x: newX, y: newY});
+                }
+                
+                return results;
+            }
+            
+            // Draw the transformed function
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            
+            // Sample many x values
+            for (let pixelX = 0; pixelX < width; pixelX += 2) {
+                const x = (pixelX - width/2) / scale;
+                const points = getYValues(x);
+                
+                for (let point of points) {
+                    const drawX = width/2 + point.x * scale;
+                    const drawY = height/2 - point.y * scale;
+                    
+                    if (drawY >= 0 && drawY <= height) {
+                        ctx.fillStyle = '#667eea';
+                        ctx.beginPath();
+                        ctx.arc(drawX, drawY, 2, 0, 2 * Math.PI);
+                        ctx.fill();
+                    }
+                }
+            }
+            
+            // Check if it's still a function (vertical line test)
+            let isFunction = true;
+            let failureX = null;
+            
+            for (let testX = -10; testX <= 10; testX += 0.2) {
+                const points = getYValues(testX);
+                if (points.length > 1) {
+                    isFunction = false;
+                    failureX = testX;
+                    break;
+                }
+            }
+            
+            // Show vertical line test visualization
+            if (!isFunction && failureX !== null) {
+                const lineX = width/2 + failureX * scale;
+                ctx.strokeStyle = '#dc3545';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([10, 5]);
+                ctx.beginPath();
+                ctx.moveTo(lineX, 0);
+                ctx.lineTo(lineX, height);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Mark intersection points
+                const points = getYValues(failureX);
+                for (let point of points) {
+                    const drawX = width/2 + point.x * scale;
+                    const drawY = height/2 - point.y * scale;
+                    ctx.fillStyle = '#dc3545';
+                    ctx.beginPath();
+                    ctx.arc(drawX, drawY, 8, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+            
+            // Update status
+            const statusEl = document.getElementById('functionStatus');
+            if (statusEl) {
+                if (isFunction) {
+                    statusEl.style.background = 'linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%)';
+                    statusEl.style.border = '3px solid #28a745';
+                    statusEl.style.color = '#155724';
+                    statusEl.innerHTML = '✅ This IS a function! Passes the vertical line test.';
+                } else {
+                    statusEl.style.background = 'linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%)';
+                    statusEl.style.border = '3px solid #dc3545';
+                    statusEl.style.color = '#721c24';
+                    statusEl.innerHTML = '❌ NOT a function! The red line crosses the graph multiple times.<br><span style="font-size: 0.9rem;">For one input (x-value), there are multiple outputs (y-values).</span>';
+                }
+            }
+        }
+
+        // Event listeners
+        const angle1Input = document.getElementById('angle1');
+        if (angle1Input) {
+            angle1Input.addEventListener('input', function() {
+                drawUnitCircle1();
+                drawTrigWave();
+            });
+        }
+
+        // Quadratic solver listeners
+        const quadAInput = document.getElementById('quadA');
+        const quadBInput = document.getElementById('quadB');
+        const quadCInput = document.getElementById('quadC');
+        
+        if (quadAInput) {
+            quadAInput.addEventListener('input', function() {
+                document.getElementById('quadAValue').textContent = this.value;
+                drawQuadraticSolver();
+            });
+        }
+        if (quadBInput) {
+            quadBInput.addEventListener('input', function() {
+                document.getElementById('quadBValue').textContent = this.value;
+                drawQuadraticSolver();
+            });
+        }
+        if (quadCInput) {
+            quadCInput.addEventListener('input', function() {
+                document.getElementById('quadCValue').textContent = this.value;
+                drawQuadraticSolver();
+            });
+        }
+        
+        // Linear plotter listeners
+        const slopeMInput = document.getElementById('slopeM');
+        const interceptBInput = document.getElementById('interceptB');
+        
+        if (slopeMInput) {
+            slopeMInput.addEventListener('input', function() {
+                document.getElementById('slopeMValue').textContent = this.value;
+                drawLinearPlotter();
+            });
+        }
+        if (interceptBInput) {
+            interceptBInput.addEventListener('input', function() {
+                document.getElementById('interceptBValue').textContent = this.value;
+                drawLinearPlotter();
+            });
+        }
+        
+        // Compound interest listeners
+        const principalInput = document.getElementById('principal');
+        const rateInput = document.getElementById('rate');
+        const yearsInput = document.getElementById('years');
+        
+        if (principalInput) {
+            principalInput.addEventListener('input', function() {
+                document.getElementById('principalDisplay').textContent = this.value;
+                drawCompoundInterest();
+            });
+        }
+        if (rateInput) {
+            rateInput.addEventListener('input', function() {
+                document.getElementById('rateDisplay').textContent = this.value;
+                drawCompoundInterest();
+            });
+        }
+        if (yearsInput) {
+            yearsInput.addEventListener('input', function() {
+                document.getElementById('yearsDisplay').textContent = this.value;
+                drawCompoundInterest();
+            });
+        }
+
+        const vShiftInput = document.getElementById('vShift');
+        const hShiftInput = document.getElementById('hShift');
+        const vStretchInput = document.getElementById('vStretch');
+
+        if (vShiftInput) {
+            vShiftInput.addEventListener('input', function() {
+                document.getElementById('vShiftValue').textContent = this.value;
+                drawTransformation();
+            });
+        }
+
+        if (hShiftInput) {
+            hShiftInput.addEventListener('input', function() {
+                document.getElementById('hShiftValue').textContent = this.value;
+                drawTransformation();
+            });
+        }
+
+        if (vStretchInput) {
+            vStretchInput.addEventListener('input', function() {
+                document.getElementById('vStretchValue').textContent = this.value;
+                drawTransformation();
+            });
+        }
+        
+        // Transformation Lab listeners
+        const baseFunctionInput = document.getElementById('baseFunction');
+        const transformTypeInput = document.getElementById('transformType');
+        const vShift2Input = document.getElementById('vShift2');
+        const hShift2Input = document.getElementById('hShift2');
+        const vStretch2Input = document.getElementById('vStretch2');
+        
+        if (baseFunctionInput) {
+            baseFunctionInput.addEventListener('change', drawTransformationLab);
+        }
+        if (transformTypeInput) {
+            transformTypeInput.addEventListener('change', drawTransformationLab);
+        }
+        if (vShift2Input) {
+            vShift2Input.addEventListener('input', function() {
+                document.getElementById('vShift2Display').textContent = this.value;
+                drawTransformationLab();
+            });
+        }
+        if (hShift2Input) {
+            hShift2Input.addEventListener('input', function() {
+                document.getElementById('hShift2Display').textContent = this.value;
+                drawTransformationLab();
+            });
+        }
+        if (vStretch2Input) {
+            vStretch2Input.addEventListener('input', function() {
+                document.getElementById('vStretch2Display').textContent = this.value;
+                drawTransformationLab();
+            });
+        }
+
+        // Initial draws
+        window.addEventListener('load', function() {
+            // Draw all canvases
+            drawAbacus();
+            drawUnitCircle1();
+            drawTrigWave();
+            drawParabola();
+            drawQuadraticSolver();
+            drawCoordinatePlane();
+            drawLinearPlotter();
+            drawExponential();
+            drawCompoundInterest();
+            drawTransformation();
+            drawTransformationLab();
+            
+            // Abacus click listener
+            const abacusCanvas = document.getElementById('abacusCanvas');
+            if (abacusCanvas) {
+                abacusCanvas.addEventListener('click', handleAbacusClick);
+            }
+            
+            // Angle slider listener
+            const angle1Input = document.getElementById('angle1');
+            if (angle1Input) {
+                angle1Input.addEventListener('input', function() {
+                    drawUnitCircle1();
+                    drawTrigWave();
+                });
+            }
+
+            // Quadratic solver listeners
+            const quadAInput = document.getElementById('quadA');
+            const quadBInput = document.getElementById('quadB');
+            const quadCInput = document.getElementById('quadC');
+            
+            if (quadAInput) {
+                quadAInput.addEventListener('input', function() {
+                    document.getElementById('quadAValue').textContent = this.value;
+                    drawQuadraticSolver();
+                });
+            }
+            if (quadBInput) {
+                quadBInput.addEventListener('input', function() {
+                    document.getElementById('quadBValue').textContent = this.value;
+                    drawQuadraticSolver();
+                });
+            }
+            if (quadCInput) {
+                quadCInput.addEventListener('input', function() {
+                    document.getElementById('quadCValue').textContent = this.value;
+                    drawQuadraticSolver();
+                });
+            }
+            
+            // Linear plotter listeners
+            const slopeMInput = document.getElementById('slopeM');
+            const interceptBInput = document.getElementById('interceptB');
+            
+            if (slopeMInput) {
+                slopeMInput.addEventListener('input', function() {
+                    document.getElementById('slopeMValue').textContent = this.value;
+                    drawLinearPlotter();
+                });
+            }
+            if (interceptBInput) {
+                interceptBInput.addEventListener('input', function() {
+                    document.getElementById('interceptBValue').textContent = this.value;
+                    drawLinearPlotter();
+                });
+            }
+            
+            // Compound interest listeners
+            const principalInput = document.getElementById('principal');
+            const rateInput = document.getElementById('rate');
+            const yearsInput = document.getElementById('years');
+            
+            if (principalInput) {
+                principalInput.addEventListener('input', function() {
+                    document.getElementById('principalDisplay').textContent = this.value;
+                    drawCompoundInterest();
+                });
+            }
+            if (rateInput) {
+                rateInput.addEventListener('input', function() {
+                    document.getElementById('rateDisplay').textContent = this.value;
+                    drawCompoundInterest();
+                });
+            }
+            if (yearsInput) {
+                yearsInput.addEventListener('input', function() {
+                    document.getElementById('yearsDisplay').textContent = this.value;
+                    drawCompoundInterest();
+                });
+            }
+            
+            // Transformation listeners
+            const vShiftInput = document.getElementById('vShift');
+            const hShiftInput = document.getElementById('hShift');
+            const vStretchInput = document.getElementById('vStretch');
+
+            if (vShiftInput) {
+                vShiftInput.addEventListener('input', function() {
+                    document.getElementById('vShiftValue').textContent = this.value;
+                    drawTransformation();
+                });
+            }
+            if (hShiftInput) {
+                hShiftInput.addEventListener('input', function() {
+                    document.getElementById('hShiftValue').textContent = this.value;
+                    drawTransformation();
+                });
+            }
+            if (vStretchInput) {
+                vStretchInput.addEventListener('input', function() {
+                    document.getElementById('vStretchValue').textContent = this.value;
+                    drawTransformation();
+                });
+            }
+            
+            // Transformation Lab listeners
+            const baseFunctionInput = document.getElementById('baseFunction');
+            const transformTypeInput = document.getElementById('transformType');
+            const vShift2Input = document.getElementById('vShift2');
+            const hShift2Input = document.getElementById('hShift2');
+            const vStretch2Input = document.getElementById('vStretch2');
+            
+            if (baseFunctionInput) {
+                baseFunctionInput.addEventListener('change', drawTransformationLab);
+            }
+            if (transformTypeInput) {
+                transformTypeInput.addEventListener('change', drawTransformationLab);
+            }
+            if (vShift2Input) {
+                vShift2Input.addEventListener('input', function() {
+                    document.getElementById('vShift2Display').textContent = this.value;
+                    drawTransformationLab();
+                });
+            }
+            if (hShift2Input) {
+                hShift2Input.addEventListener('input', function() {
+                    document.getElementById('hShift2Display').textContent = this.value;
+                    drawTransformationLab();
+                });
+            }
+            if (vStretch2Input) {
+                vStretch2Input.addEventListener('input', function() {
+                    document.getElementById('vStretch2Display').textContent = this.value;
+                    drawTransformationLab();
+                });
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            drawAbacus();
+            drawUnitCircle1();
+            drawTrigWave();
+            drawParabola();
+            drawQuadraticSolver();
+            drawCoordinatePlane();
+            drawLinearPlotter();
+            drawExponential();
+            drawCompoundInterest();
+            drawTransformation();
+            drawTransformationLab();
+        });
+    </script>
+</body>
+</html>
